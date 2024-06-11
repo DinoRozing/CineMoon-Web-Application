@@ -9,8 +9,8 @@ namespace Cinema.Model
     public class Projection
     {
         public Guid Id { get; set; }
-        public DateTime Date { get; set; }
-        public TimeSpan Time { get; set; }
+        public DateOnly Date { get; set; }
+        public TimeOnly Time { get; set; }
         public Guid MovieId { get; set; }
         public Guid HallId { get; set; }
         public bool IsActive { get; set; }
@@ -18,9 +18,8 @@ namespace Cinema.Model
         public DateTime DateUpdated { get; set; }
         public Guid CreatedByUserId { get; set; }
         public Guid UpdatedByUserId { get; set; }
-
         public Movie? Movie { get; set; }
-        public Hall Hall { get; set; }
+        public Hall? Hall { get; set; }
         public ICollection<Ticket>? Tickets { get; set; }
         public ICollection<SeatReserved>? SeatsReserved { get; set; }
     }
