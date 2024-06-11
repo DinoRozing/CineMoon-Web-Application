@@ -1,7 +1,6 @@
-﻿namespace Cinema.Model
-{
-    public class Class1
-    {
+﻿namespace Cinema.Model;
 
-    }
+public class Class1
+{
+
 }

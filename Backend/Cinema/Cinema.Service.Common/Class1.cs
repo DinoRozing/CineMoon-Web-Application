@@ -1,7 +1,6 @@
-﻿namespace Cinema.Service.Common
-{
-    public class Class1
-    {
+﻿namespace Cinema.Service.Common;
 
-    }
+public class Class1
+{
+
 }

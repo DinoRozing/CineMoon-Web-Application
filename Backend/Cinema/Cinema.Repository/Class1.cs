@@ -1,7 +1,6 @@
-﻿namespace Cinema.Repository
-{
-    public class Class1
-    {
+﻿namespace Cinema.Repository;
 
-    }
+public class Class1
+{
+
 }
