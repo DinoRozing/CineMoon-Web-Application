@@ -4,7 +4,7 @@ INSERT INTO "Role" ("Id", "RoleName") VALUES
 
 INSERT INTO "User" ("Id", "Email", "Password", "FirstName", "LastName", "RoleId", "IsActive", "DateCreated", "DateUpdated", "CreatedByUserId", "UpdatedByUserId") VALUES
 (uuid_generate_v4(), 'admin@example.com', 'password', 'Admin', 'User', (SELECT "Id" FROM "Role" WHERE "RoleName" = 'Admin'), TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, uuid_generate_v4(), uuid_generate_v4()),
-(uuid_generate_v4(), 'user@example.com', 'password', 'Regular', 'User', (SELECT "Id" FROM "Role" WHERE "RoleName" = 'User'), TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, uuid_generate_v4(), uuid_generate_v4());
+(uuid_generate_v4(), 'user@example.com', 'password', 'Regular', 'User', (SELECT "Id" FROM "Role" WHERE "RoleName" = 'User'), TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, uuid_generate_v4(), uuid_generate_v4()),
 (uuid_generate_v4(), 'user2@example.com', 'password', 'John', 'Doe', (SELECT "Id" FROM "Role" WHERE "RoleName" = 'User'), TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, uuid_generate_v4(), uuid_generate_v4());
 
 INSERT INTO "Admin" ("Id", "Email", "Password", "FirstName", "LastName", "IsActive", "DateCreated", "DateUpdated", "CreatedByUserId", "UpdatedByUserId") VALUES
@@ -16,7 +16,7 @@ INSERT INTO "Movie" ("Id", "Title", "Genre", "Description", "Duration", "Languag
 
 INSERT INTO "Review" ("Id", "Description", "Rating", "UserId", "MovieId", "IsActive", "DateCreated", "DateUpdated", "CreatedByUserId", "UpdatedByUserId") VALUES
 (uuid_generate_v4(), 'Great movie!', 5, (SELECT "Id" FROM "User" WHERE "Email" = 'user@example.com'), (SELECT "Id" FROM "Movie" WHERE "Title" = 'Movie Title 1'), TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, uuid_generate_v4(), uuid_generate_v4()),
-(uuid_generate_v4(), 'Not bad', 3, (SELECT "Id" FROM "User" WHERE "Email" = 'user@example.com'), (SELECT "Id" FROM "Movie" WHERE "Title" = 'Movie Title 2'), TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, uuid_generate_v4(), uuid_generate_v4());
+(uuid_generate_v4(), 'Not bad', 3, (SELECT "Id" FROM "User" WHERE "Email" = 'user@example.com'), (SELECT "Id" FROM "Movie" WHERE "Title" = 'Movie Title 2'), TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, uuid_generate_v4(), uuid_generate_v4()),
 (uuid_generate_v4(), 'I enjoyed the movie!', 4, (SELECT "Id" FROM "User" WHERE "Email" = 'user2@example.com'), (SELECT "Id" FROM "Movie" WHERE "Title" = 'Movie Title 1'), TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, uuid_generate_v4(), uuid_generate_v4());
 
 INSERT INTO "Actor" ("Id", "Name", "IsActive", "DateCreated", "DateUpdated", "CreatedByUserId", "UpdatedByUserId") VALUES
