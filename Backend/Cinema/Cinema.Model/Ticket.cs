@@ -19,8 +19,8 @@ namespace Cinema.Model
         public Guid CreatedByUserId { get; set; }
         public Guid UpdatedByUserId { get; set; }
 
-        public Payment Payment { get; set; }
-        public User User { get; set; }
-        public Projection Projection { get; set; }
+        // public Payment Payment { get; set; }
+        // public User User { get; set; }
+        // public Projection Projection { get; set; }
     }
 }
