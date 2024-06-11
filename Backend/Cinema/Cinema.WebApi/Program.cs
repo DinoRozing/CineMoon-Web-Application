@@ -11,7 +11,6 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 string connectionString = builder.Configuration.GetSection("AppSettings").GetValue<String>("ConnectionString");
 
-
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
 {
@@ -19,6 +18,7 @@ builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
         .RegisterType<MovieService>()
         .As<IMovieService>()
         .InstancePerLifetimeScope();
+
     containerBuilder
         .RegisterType<MovieRepository>()
         .As<IMovieRepository>()
@@ -32,8 +32,18 @@ builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
         .RegisterType<TicketRepository>()
         .As<ITicketRepository>()
         .InstancePerLifetimeScope();
-    containerBuilder.RegisterInstance(connectionString).As<string>();
 
+    containerBuilder
+        .RegisterType<ProjectionService>()
+        .As<IProjectionService>()
+        .InstancePerLifetimeScope();
+
+    containerBuilder
+        .RegisterType<ProjectionRepository>()
+        .As<IProjectionRepository>()
+        .InstancePerLifetimeScope();
+
+    containerBuilder.RegisterInstance(connectionString).As<string>();
 });
 
 var app = builder.Build();

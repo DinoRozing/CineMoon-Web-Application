@@ -9,10 +9,10 @@ namespace Cinema.Model
     public class Projection
     {
         public Guid Id { get; set; }
-        public DateOnly Date { get; set; }
-        public TimeOnly Time { get; set; }
+        public DateTime Date { get; set; }
+        public TimeSpan Time { get; set; }
         public Guid MovieId { get; set; }
-        public Guid HallId { get; set; }
+        public Guid UserId { get; set; }
         public bool IsActive { get; set; }
         public DateTime DateCreated { get; set; }
         public DateTime DateUpdated { get; set; }

@@ -19,7 +19,6 @@ namespace Cinema.Model
         public DateTime DateUpdated { get; set; }
         public Guid CreatedByUserId { get; set; }
         public Guid UpdatedByUserId { get; set; }
-
         public User? User { get; set; }
         public Movie? Movie { get; set; }
     }

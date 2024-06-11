@@ -16,8 +16,7 @@ namespace Cinema.Model
         public DateTime DateUpdated { get; set; }
         public Guid CreatedByUserId { get; set; }
         public Guid UpdatedByUserId { get; set; }
-
         public Projection? Projection { get; set; }
-        public Hall Hall { get; set; }
+        public Hall? Hall { get; set; }
     }
 }

@@ -2,7 +2,6 @@ using Cinema.Model;
 using Cinema.Service.Common;
 using Microsoft.AspNetCore.Mvc;
 
-
 namespace Cinema.WebApi.Controllers
 {
     [Route("api/[controller]")]
