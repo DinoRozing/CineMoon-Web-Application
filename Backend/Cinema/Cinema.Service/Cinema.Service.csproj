@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Cinema.Repository.Common\Cinema.Repository.Common.csproj" />
+    <ProjectReference Include="..\Cinema.Service.Common\Cinema.Service.Common.csproj" />
+  </ItemGroup>
+
 </Project>

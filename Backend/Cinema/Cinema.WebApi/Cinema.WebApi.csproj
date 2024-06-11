@@ -7,8 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Autofac" Version="8.0.0" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="9.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.5" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Cinema.Repository.Common\Cinema.Repository.Common.csproj" />
+    <ProjectReference Include="..\Cinema.Repository\Cinema.Repository.csproj" />
+    <ProjectReference Include="..\Cinema.Service.Common\Cinema.Service.Common.csproj" />
+    <ProjectReference Include="..\Cinema.Service\Cinema.Service.csproj" />
   </ItemGroup>
 
 </Project>
