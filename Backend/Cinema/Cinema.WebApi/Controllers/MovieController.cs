@@ -1,29 +1,30 @@
+using Cinema.Model;
 using Cinema.Service.Common;
 using Microsoft.AspNetCore.Mvc;
-using Cinema.Service.Common;
+
 
 namespace Cinema.WebApi.Controllers
 {
-    
-
+    [Route("api/[controller]")]
     [ApiController]
-    [Route("[controller]")]
-    public class MovieController : Controller
+    public class MovieController : ControllerBase
     {
         private readonly IMovieService movieService;
+
         public MovieController(IMovieService movieService)
         {
             this.movieService = movieService;
         }
-        
-        [HttpGet]
-        public async Task<OkObjectResult> GetMoviesAsync()
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Movie>> GetMovieByIdAsync(Guid id)
         {
-           var movies =  await movieService.GetMoviesAsync();
-
-            return Ok(movies);
+            var movie = await movieService.GetMovieByIdAsync(id);
+            if (movie == null)
+            {
+                return NotFound();
+            }
+            return movie;
         }
-
-
     }
 }

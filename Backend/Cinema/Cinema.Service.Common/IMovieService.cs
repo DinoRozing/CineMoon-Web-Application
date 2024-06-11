@@ -1,7 +1,9 @@
-namespace Cinema.Service.Common;
+using Cinema.Model;
 
-public interface IMovieService
+namespace Cinema.Service.Common
 {
-    Task<List<string>> GetMoviesAsync();
-
+    public interface IMovieService
+    {
+        Task<Movie> GetMovieByIdAsync(Guid id);
+    }
 }
