@@ -33,7 +33,11 @@
   "keyToString": {
     ".NET Launch Settings Profile.Cinema.WebApi: http.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+<<<<<<< HEAD
     "git-widget-placeholder": "Rebasing feature/#3-feature",
+=======
+    "git-widget-placeholder": "feature/#3-feature",
+>>>>>>> c16e37992bb1290dc1b9c01f6b8d7834207cacbc
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "vue.rearranger.settings.migration": "true"
@@ -110,6 +114,35 @@
           </properties>
           <option name="timeStamp" value="2" />
         </line-breakpoint>
+<<<<<<< HEAD
+=======
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Cinema.WebApi/Controllers/UserController.cs</url>
+          <line>24</line>
+          <properties documentPath="$PROJECT_DIR$/Cinema.WebApi/Controllers/UserController.cs" containingFunctionPresentation="Method 'CreateUserAsync'">
+            <startOffsets>
+              <option value="644" />
+            </startOffsets>
+            <endOffsets>
+              <option value="645" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Cinema.WebApi/Controllers/UserController.cs</url>
+          <line>38</line>
+          <properties documentPath="$PROJECT_DIR$/Cinema.WebApi/Controllers/UserController.cs" containingFunctionPresentation="Method 'CreateUserAsync'">
+            <startOffsets>
+              <option value="1056" />
+            </startOffsets>
+            <endOffsets>
+              <option value="1057" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="6" />
+        </line-breakpoint>
+>>>>>>> c16e37992bb1290dc1b9c01f6b8d7834207cacbc
       </breakpoints>
     </breakpoint-manager>
   </component>

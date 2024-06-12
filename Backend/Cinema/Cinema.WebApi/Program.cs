@@ -91,7 +91,7 @@ builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
         .RegisterType<ReviewRepository>()
         .As<IReviewRepository>()
         .InstancePerLifetimeScope();
-
+    
     containerBuilder.RegisterInstance(connectionString).As<string>();
 });
 
