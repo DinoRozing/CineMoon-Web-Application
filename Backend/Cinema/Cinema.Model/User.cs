@@ -17,9 +17,5 @@ namespace Cinema.Model
         public bool IsActive { get; set; }
         public DateTime DateCreated { get; set; }
         public DateTime DateUpdated { get; set; }
-        public Guid CreatedByUserId { get; set; }
-        public Guid UpdatedByUserId { get; set; }
-        public ICollection<Ticket>? Tickets { get; set; }
-        public ICollection<Review>? Reviews { get; set; }
     }
 }

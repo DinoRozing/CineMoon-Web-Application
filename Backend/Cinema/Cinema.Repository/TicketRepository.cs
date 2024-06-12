@@ -6,18 +6,38 @@ namespace Cinema.Repository;
 
 public class TicketRepository: ITicketRepository
 {
-    private readonly string connectionString;
+    private readonly string _connectionString;
 
     public TicketRepository(string connectionString)
     {
-        this.connectionString = connectionString;
+        this._connectionString = connectionString;
+    }
+    
+    public async Task CreateTicketAsync(Ticket ticket)
+    {
+        using var connection = new NpgsqlConnection(_connectionString);
+        await connection.OpenAsync();
+        var commandText = @"INSERT INTO ""Ticket"" (""Id"", ""Price"", ""PaymentId"", ""UserId"", ""ProjectionId"", ""IsActive"", ""DateCreated"", ""DateUpdated"", ""CreatedByUserId"", ""UpdatedByUserId"")
+                                VALUES (@Id, @Price, @PaymentId, @UserId, @ProjectionId, @IsActive, @DateCreated, @DateUpdated, @CreatedByUserId, @UpdatedByUserId);";
+        using var command = new NpgsqlCommand(commandText, connection);
+        command.Parameters.AddWithValue("@Id", ticket.Id);
+        command.Parameters.AddWithValue("@Price", ticket.Price);
+        command.Parameters.AddWithValue("@PaymentId", (object)ticket.PaymentId ?? DBNull.Value);
+        command.Parameters.AddWithValue("@UserId", (object)ticket.UserId ?? DBNull.Value);
+        command.Parameters.AddWithValue("@ProjectionId", (object)ticket.ProjectionId ?? DBNull.Value);
+        command.Parameters.AddWithValue("@IsActive", ticket.IsActive);
+        command.Parameters.AddWithValue("@DateCreated", ticket.DateCreated);
+        command.Parameters.AddWithValue("@DateUpdated", ticket.DateUpdated);
+        command.Parameters.AddWithValue("@CreatedByUserId", ticket.CreatedByUserId);
+        command.Parameters.AddWithValue("@UpdatedByUserId", ticket.UpdatedByUserId);
+        await command.ExecuteNonQueryAsync();
     }
     
     public async Task<List<Ticket>> GetAllTicketsAsync()
     {
         var tickets = new List<Ticket>();
 
-        await using var connection = new NpgsqlConnection(connectionString);
+        await using var connection = new NpgsqlConnection(_connectionString);
         var commandText = "SELECT * FROM \"Ticket\";";
 
         await using var command = new NpgsqlCommand(commandText, connection);
@@ -51,7 +71,7 @@ public class TicketRepository: ITicketRepository
     {
         Ticket ticket = null;
 
-        await using var connection = new NpgsqlConnection(connectionString);
+        await using var connection = new NpgsqlConnection(_connectionString);
         var commandText = "SELECT * FROM \"Ticket\" WHERE \"Id\" = @TicketId;";
             
         await using var command = new NpgsqlCommand(commandText, connection);
@@ -83,7 +103,7 @@ public class TicketRepository: ITicketRepository
     
     public async Task DeleteTicketAsync(Guid id)
     {
-        using var connection = new NpgsqlConnection(connectionString);
+        using var connection = new NpgsqlConnection(_connectionString);
         await connection.OpenAsync();
         var commandText = "DELETE FROM \"Ticket\" WHERE \"Id\" = @id;";
         using var command = new NpgsqlCommand(commandText, connection);
