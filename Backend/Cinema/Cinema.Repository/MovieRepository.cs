@@ -9,8 +9,11 @@ namespace Cinema.Repository
 {
     public class MovieRepository : IMovieRepository
     {
-        private readonly string connectionString = "Host=localhost;Port=5432;Database=Football;Username=postgres;Password=lozinka;";
-
+        private readonly string connectionString;
+        public MovieRepository(string connectionString)
+        {
+            this.connectionString = connectionString;
+        }
         public async Task<Movie> GetMovieByIdAsync(Guid id)
         {
             using (var connection = new NpgsqlConnection(connectionString))
@@ -29,7 +32,7 @@ namespace Cinema.Repository
                                 Id = reader.GetGuid(reader.GetOrdinal("Id")),
                                 Title = reader.GetString(reader.GetOrdinal("Title")),
                                 Description = reader.IsDBNull(reader.GetOrdinal("Description")) ? null : reader.GetString(reader.GetOrdinal("Description")),
-                                Duration = reader.GetTimeSpan(reader.GetOrdinal("Duration")),
+                                Duration = reader.GetInt32(reader.GetOrdinal("Duration")),
                                 Language = reader.IsDBNull(reader.GetOrdinal("Language")) ? null : reader.GetString(reader.GetOrdinal("Language")),
                                 CoverUrl = reader.IsDBNull(reader.GetOrdinal("CoverUrl")) ? null : reader.GetString(reader.GetOrdinal("CoverUrl")),
                                 TrailerUrl = reader.IsDBNull(reader.GetOrdinal("TrailerUrl")) ? null : reader.GetString(reader.GetOrdinal("TrailerUrl")),
@@ -65,7 +68,7 @@ namespace Cinema.Repository
                                 Id = reader.GetGuid(reader.GetOrdinal("Id")),
                                 Title = reader.GetString(reader.GetOrdinal("Title")),
                                 Description = reader.IsDBNull(reader.GetOrdinal("Description")) ? null : reader.GetString(reader.GetOrdinal("Description")),
-                                Duration = reader.GetTimeSpan(reader.GetOrdinal("Duration")),
+                                Duration = reader.GetInt32(reader.GetOrdinal("Duration")),
                                 Language = reader.IsDBNull(reader.GetOrdinal("Language")) ? null : reader.GetString(reader.GetOrdinal("Language")),
                                 CoverUrl = reader.IsDBNull(reader.GetOrdinal("CoverUrl")) ? null : reader.GetString(reader.GetOrdinal("CoverUrl")),
                                 TrailerUrl = reader.IsDBNull(reader.GetOrdinal("TrailerUrl")) ? null : reader.GetString(reader.GetOrdinal("TrailerUrl")),

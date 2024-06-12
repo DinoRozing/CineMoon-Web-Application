@@ -12,7 +12,7 @@ namespace Cinema.Model
         public string? Title { get; set; }
         public string? Genre { get; set; }
         public string? Description { get; set; }
-        public TimeSpan Duration { get; set; }
+        public int Duration { get; set; }
         public string? Language { get; set; }
         public string? CoverUrl { get; set; }
         public string? TrailerUrl { get; set; }
