@@ -12,7 +12,7 @@ namespace Cinema.Repository
             this.connectionString = connectionString;
         }
 
-        public async Task AddProjection(Projection projection)
+        public async Task AddProjectionAsync(Projection projection)
         {
             await using var connection = new NpgsqlConnection(connectionString);
             await connection.OpenAsync();
@@ -35,7 +35,7 @@ namespace Cinema.Repository
             await command.ExecuteNonQueryAsync();
         }
 
-        public async Task<IEnumerable<Projection>> GetAllProjections()
+        public async Task<List<Projection>> GetAllProjectionsAsync()
         {
             var projections = new List<Projection>();
 
@@ -67,7 +67,7 @@ namespace Cinema.Repository
             return projections;
         }
 
-        public async Task<Projection?> GetProjection(Guid id)
+        public async Task<Projection?> GetProjectionByIdAsync(Guid id)
         {
             await using var connection = new NpgsqlConnection(connectionString);
             var commandText = "SELECT * FROM \"Projection\" WHERE \"Id\" = @Id;";
@@ -96,7 +96,7 @@ namespace Cinema.Repository
             return null;
         }
 
-        public async Task UpdateProjection(Projection projection)
+        public async Task UpdateProjectionAsync(Projection projection)
         {
             await using var connection = new NpgsqlConnection(connectionString);
             var commandText = "UPDATE \"Projection\" SET \"Date\" = @Date, \"Time\" = @Time, \"MovieId\" = @MovieId, \"UserId\" = @USerId, " +
@@ -115,7 +115,7 @@ namespace Cinema.Repository
             await command.ExecuteNonQueryAsync();
         }
 
-        public async Task DeleteProjection(Guid id)
+        public async Task DeleteProjectionAsync(Guid id)
         {
             await using var connection = new NpgsqlConnection(connectionString);
             var commandText = "DELETE FROM \"Projection\" WHERE \"Id\" = @Id;";

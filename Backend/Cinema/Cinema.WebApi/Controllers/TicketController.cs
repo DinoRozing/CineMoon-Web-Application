@@ -1,3 +1,4 @@
+using Cinema.Model;
 using Cinema.Service.Common;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,28 +8,56 @@ namespace Cinema.WebApi.Controllers
     [Route("[controller]")]
     public class TicketController : Controller
     {
-        private readonly ITicketService ticketService;
+        private readonly ITicketService _ticketService;
         public TicketController(ITicketService ticketService)
         {
-            this.ticketService = ticketService;
+            this._ticketService = ticketService;
+        }
+        
+        [HttpPost]
+        public async Task<IActionResult> CreateTicketAsync([FromBody] Ticket ticket)
+        {
+            try
+            {
+                var createdTicket = await _ticketService.CreateTicketAsync(ticket);
+                return Ok(createdTicket);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message); // 500 Internal Server Error
+            }
         }
         
         [HttpGet]
         public async Task<IActionResult> GetAllTicketsAsync()
         {
-            var tickets = await ticketService.GetAllTicketsAsync();
-            return Ok(tickets);
+            try
+            {
+                var tickets = await _ticketService.GetAllTicketsAsync();
+                return Ok(tickets);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message); 
+            }
         }
         
         [HttpGet("{id}")]
         public async Task<IActionResult> GetTicketByIdAsync(Guid id)
         {
-            var ticket = await ticketService.GetTicketByIdAsync(id);
-            if (ticket == null)
+            try
             {
-                return NotFound(); 
+                var ticket = await _ticketService.GetTicketByIdAsync(id);
+                if (ticket == null)
+                {
+                    return NotFound(); 
+                }
+                return Ok(ticket); 
             }
-            return Ok(ticket); 
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message); 
+            } 
         }
         
         [HttpDelete("{id}")]
@@ -36,12 +65,12 @@ namespace Cinema.WebApi.Controllers
         {
             try
             {
-                await ticketService.DeleteTicketAsync(id);
-                return NoContent(); // 204 No Content
+                await _ticketService.DeleteTicketAsync(id);
+                return NoContent(); 
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message); // 500 Internal Server Error
+                return StatusCode(500, ex.Message); 
             }
         }
         

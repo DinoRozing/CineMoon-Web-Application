@@ -6,7 +6,7 @@ namespace Cinema.Service.Common
     {
         Task AddProjectionAsync(Projection projection);
 
-        Task<IEnumerable<Projection>> GetAllProjectionsAsync();
+        Task<List<Projection>> GetAllProjectionsAsync();
 
         Task<Projection> GetProjectionByIdAsync(Guid id);
 

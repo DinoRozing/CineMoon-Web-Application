@@ -4,8 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Cinema.WebApi.Controllers
 {
-
-
     [ApiController]
     [Route("[controller]")]
     public class ProjectionController : Controller
@@ -76,7 +74,5 @@ namespace Cinema.WebApi.Controllers
 
             return Ok();
         }
-
-
     }
 }
