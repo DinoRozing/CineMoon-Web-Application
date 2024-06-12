@@ -17,6 +17,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cinema.Model", "Cinema.Mode
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cinema.Common", "Cinema.Common\Cinema.Common.csproj", "{410E5215-738B-4294-B3FC-3493FF80D5C5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DTO", "DTO\DTO.csproj", "{D2CC40FA-504C-4E6A-8272-F2349FF25CAF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cinema.Mapper", "Cinema.Mapper\Cinema.Mapper.csproj", "{18F0D283-5A69-4418-AE9F-618AE5647A48}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,5 +58,13 @@ Global
 		{410E5215-738B-4294-B3FC-3493FF80D5C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{410E5215-738B-4294-B3FC-3493FF80D5C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{410E5215-738B-4294-B3FC-3493FF80D5C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D2CC40FA-504C-4E6A-8272-F2349FF25CAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2CC40FA-504C-4E6A-8272-F2349FF25CAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2CC40FA-504C-4E6A-8272-F2349FF25CAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2CC40FA-504C-4E6A-8272-F2349FF25CAF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{18F0D283-5A69-4418-AE9F-618AE5647A48}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18F0D283-5A69-4418-AE9F-618AE5647A48}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18F0D283-5A69-4418-AE9F-618AE5647A48}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18F0D283-5A69-4418-AE9F-618AE5647A48}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

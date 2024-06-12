@@ -4,6 +4,9 @@
     <projectFile profileName="http">Cinema.WebApi/Cinema.WebApi.csproj</projectFile>
     <projectFile profileName="https">Cinema.WebApi/Cinema.WebApi.csproj</projectFile>
   </component>
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="72aca83a-f338-4f38-8b37-14e1a62741e5" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
@@ -14,10 +17,13 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "customColor": "",
-  "associatedIndex": 8
-}]]></component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/d02ebc58d66a491789dff89fc75038ec219600/fb/fd47d6ee/ActionMethodExecutor.cs" root0="SKIP_HIGHLIGHTING" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 8
+}</component>
   <component name="ProjectId" id="2hjXWGWQxXlYrfuKNg1DIJ9d6Z1" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -25,8 +31,10 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    ".NET Launch Settings Profile.Cinema.WebApi: http.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "Rebasing feature/#2-feature",
+    "git-widget-placeholder": "feature/#3-feature",
+    "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "vue.rearranger.settings.migration": "true"
   },
@@ -86,4 +94,49 @@
     <option name="version" value="3" />
   </component>
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Cinema.Repository/TicketRepository.cs</url>
+          <line>33</line>
+          <properties documentPath="$PROJECT_DIR$/Cinema.Repository/TicketRepository.cs" containingFunctionPresentation="Method 'CreateTicketAsync'">
+            <startOffsets>
+              <option value="1793" />
+            </startOffsets>
+            <endOffsets>
+              <option value="1794" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Cinema.WebApi/Controllers/UserController.cs</url>
+          <line>24</line>
+          <properties documentPath="$PROJECT_DIR$/Cinema.WebApi/Controllers/UserController.cs" containingFunctionPresentation="Method 'CreateUserAsync'">
+            <startOffsets>
+              <option value="644" />
+            </startOffsets>
+            <endOffsets>
+              <option value="645" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Cinema.WebApi/Controllers/UserController.cs</url>
+          <line>38</line>
+          <properties documentPath="$PROJECT_DIR$/Cinema.WebApi/Controllers/UserController.cs" containingFunctionPresentation="Method 'CreateUserAsync'">
+            <startOffsets>
+              <option value="1056" />
+            </startOffsets>
+            <endOffsets>
+              <option value="1057" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="6" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
 </project>

@@ -1,0 +1,14 @@
+using AutoMapper;
+using Cinema.Model;
+using DTO.UserModel;
+
+namespace Cinema.Mapper;
+
+public class UserProfile: Profile
+{
+    public UserProfile()
+    {
+        CreateMap<UserPost, User>();
+    }
+
+}
