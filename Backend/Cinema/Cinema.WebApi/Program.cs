@@ -43,6 +43,16 @@ builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
         .As<IProjectionRepository>()
         .InstancePerLifetimeScope();
 
+    containerBuilder
+        .RegisterType<ReviewService>()
+        .As<IReviewService>()
+        .InstancePerLifetimeScope();
+
+    containerBuilder
+        .RegisterType<ReviewRepository>()
+        .As<IReviewRepository>()
+        .InstancePerLifetimeScope();
+
     containerBuilder.RegisterInstance(connectionString).As<string>();
 });
 
