@@ -61,6 +61,9 @@ builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
     containerBuilder
         .RegisterType<HallRepository>()
         .As<IHallRepository>()
+        .InstancePerLifetimeScope();
+
+    containerBuilder
         .RegisterType<ReviewService>()
         .As<IReviewService>()
         .InstancePerLifetimeScope();
