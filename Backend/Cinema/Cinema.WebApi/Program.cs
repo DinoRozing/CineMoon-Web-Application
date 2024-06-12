@@ -33,6 +33,7 @@ builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
         .RegisterType<MovieRepository>()
         .As<IMovieRepository>()
         .InstancePerLifetimeScope();
+
     containerBuilder
         .RegisterType<TicketService>()
         .As<ITicketService>()
@@ -58,6 +59,25 @@ builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
         .InstancePerLifetimeScope();
 
     containerBuilder
+        .RegisterType<SeatReservedService>()
+        .As<ISeatReservedService>()
+        .InstancePerLifetimeScope();
+
+    containerBuilder
+        .RegisterType<SeatReservedRepository>()
+        .As<ISeatReservedRepository>()
+        .InstancePerLifetimeScope();
+
+    containerBuilder
+        .RegisterType<SeatService>()
+        .As<ISeatService>()
+        .InstancePerLifetimeScope();
+
+    containerBuilder
+        .RegisterType<SeatRepository>()
+        .As<ISeatRepository>()
+        .InstancePerLifetimeScope();
+
         .RegisterType<UserRepository>()
         .As<IUserRepository>()
         .InstancePerLifetimeScope();

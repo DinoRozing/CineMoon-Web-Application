@@ -19,5 +19,25 @@ namespace Cinema.Service
         {
             return await movieRepository.GetMovieByIdAsync(id);
         }
+
+        public async Task<List<Movie>> GetAllMoviesAsync()
+        {
+            return await movieRepository.GetAllMoviesAsync();
+        }
+
+        public async Task AddMovieAsync(Movie movie)
+        {
+            await movieRepository.AddMovieAsync(movie);
+        }
+
+        public async Task UpdateMovieAsync(Movie movie)
+        {
+            await movieRepository.UpdateMovieAsync(movie);
+        }
+
+        public async Task DeleteMovieAsync(Guid id)
+        {
+            await movieRepository.DeleteMovieAsync(id);
+        }
     }
 }
