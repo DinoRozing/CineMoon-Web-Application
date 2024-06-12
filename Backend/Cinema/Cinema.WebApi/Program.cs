@@ -54,6 +54,16 @@ builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
         .As<ISeatReservedRepository>()
         .InstancePerLifetimeScope();
 
+    containerBuilder
+        .RegisterType<SeatService>()
+        .As<ISeatService>()
+        .InstancePerLifetimeScope();
+
+    containerBuilder
+        .RegisterType<SeatRepository>()
+        .As<ISeatRepository>()
+        .InstancePerLifetimeScope();
+
     containerBuilder.RegisterInstance(connectionString).As<string>();
 });
 
