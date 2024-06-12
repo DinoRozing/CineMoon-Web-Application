@@ -4,10 +4,10 @@ namespace Cinema.Repository.Common
 {
     public interface IProjectionRepository
     {
-        Task AddProjection(Projection projection);
-        Task<IEnumerable<Projection>> GetAllProjections();
-        Task<Projection?> GetProjection(Guid id);
-        Task UpdateProjection(Projection projection);
-        Task DeleteProjection(Guid id);
+        Task AddProjectionAsync(Projection projection);
+        Task<List<Projection>> GetAllProjectionsAsync();
+        Task<Projection?> GetProjectionByIdAsync(Guid id);
+        Task UpdateProjectionAsync(Projection projection);
+        Task DeleteProjectionAsync(Guid id);
     }
 }

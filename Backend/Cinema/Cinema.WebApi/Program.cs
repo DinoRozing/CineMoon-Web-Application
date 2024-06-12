@@ -43,6 +43,26 @@ builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
         .As<IProjectionRepository>()
         .InstancePerLifetimeScope();
 
+    containerBuilder
+        .RegisterType<ActorService>()
+        .As<IActorService>()
+        .InstancePerLifetimeScope();
+
+    containerBuilder
+        .RegisterType<ActorRepository>()
+        .As<IActorRepository>()
+        .InstancePerLifetimeScope();
+
+    containerBuilder
+        .RegisterType<HallService>()
+        .As<IHallService>()
+        .InstancePerLifetimeScope();
+
+    containerBuilder
+        .RegisterType<HallRepository>()
+        .As<IHallRepository>()
+        .InstancePerLifetimeScope();
+
     containerBuilder.RegisterInstance(connectionString).As<string>();
 });
 
