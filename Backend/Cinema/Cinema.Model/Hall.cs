@@ -9,7 +9,7 @@ namespace Cinema.Model
     public class Hall
     {
         public Guid Id { get; set; }
-        public string? HallNumber { get; set; }
+        public int? HallNumber { get; set; }
         public ICollection<Seat>? Seats { get; set; }
         public ICollection<Projection>? Projections { get; set; }
     }

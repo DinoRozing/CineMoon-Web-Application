@@ -10,44 +10,32 @@ namespace Cinema.Service
 
         public ProjectionService(IProjectionRepository projectionRepository)
         {
-            _projectionRepository = projectionRepository ?? throw new ArgumentNullException(nameof(projectionRepository));
+            this._projectionRepository = projectionRepository;
         }
 
-        public async Task AddProjectionAsync(Projection projection)
+        public async Task<List<Projection>> GetAllProjectionsAsync()
         {
-            if (projection == null)
-                throw new ArgumentNullException(nameof(projection));
-
-            await _projectionRepository.AddProjection(projection);
-        }
-
-        public async Task<IEnumerable<Projection>> GetAllProjectionsAsync()
-        {
-            return await _projectionRepository.GetAllProjections();
+            return await _projectionRepository.GetAllProjectionsAsync();
         }
 
         public async Task<Projection> GetProjectionByIdAsync(Guid id)
         {
-            if (id == Guid.Empty)
-                throw new ArgumentException("Projection ID cannot be empty or null", nameof(id));
+            return await _projectionRepository.GetProjectionByIdAsync(id);
+        }
 
-            return await _projectionRepository.GetProjection(id);
+        public async Task AddProjectionAsync(Projection projection)
+        {
+            await _projectionRepository.AddProjectionAsync(projection);
         }
 
         public async Task UpdateProjectionAsync(Projection projection)
         {
-            if (projection == null)
-                throw new ArgumentNullException(nameof(projection));
-
-            await _projectionRepository.UpdateProjection(projection);
+            await _projectionRepository.UpdateProjectionAsync(projection);
         }
 
         public async Task DeleteProjectionAsync(Guid id)
         {
-            if (id == Guid.Empty)
-                throw new ArgumentException("Projection ID cannot be empty or null", nameof(id));
-
-            await _projectionRepository.DeleteProjection(id);
+            await _projectionRepository.DeleteProjectionAsync(id);
         }
     }
 }

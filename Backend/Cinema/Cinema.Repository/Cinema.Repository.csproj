@@ -16,9 +16,5 @@
     <ProjectReference Include="..\Cinema.Service.Common\Cinema.Service.Common.csproj" />
     <ProjectReference Include="..\Cinema.Service\Cinema.Service.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Npgsql" Version="8.0.3" />
-  </ItemGroup>
-
+	
 </Project>
