@@ -1,10 +1,11 @@
 using Cinema.Model;
+using DTO.UserModel;
 
 namespace Cinema.Repository.Common;
 
 public interface IUserRepository
 {
     Task<User> RegisterUserAsync(User user);
-    //Task<UserLogin> LoginUserAsync(UserLogin userLogin);
-    Task<User> GetUserByEmailAsync(string email);
+    Task<TokenData> GetUserByEmailAsync(string email);
+    Task<Guid?> GetRoleIdByNameAsync(string roleName);
 }

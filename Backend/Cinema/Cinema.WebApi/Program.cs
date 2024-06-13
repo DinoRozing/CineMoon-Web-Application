@@ -1,3 +1,4 @@
+using System.Text;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
@@ -7,6 +8,10 @@ using Cinema.Repository.Common;
 using Cinema.Service;
 using Cinema.Service.Common;
 using Cinema.WebApi.Controllers;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +20,20 @@ builder.Services.AddEndpointsApiExplorer();
 string connectionString = builder.Configuration.GetSection("AppSettings").GetValue<String>("ConnectionString");
 
 builder.Services.AddAutoMapper(typeof(UserProfile), typeof(ReviewProfile));
+
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
+                .GetBytes(builder.Configuration.GetSection("AppSettings:Token").Value)),
+            ValidateIssuer = false,
+            ValidateAudience = false
+        };
+    });
 
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
@@ -113,6 +132,8 @@ builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
 var app = builder.Build();
 
 app.UseHttpsRedirection();
+app.UseAuthentication();
+
 app.UseAuthorization();
 app.MapControllers();
 app.Run();

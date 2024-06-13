@@ -10,6 +10,7 @@ public class UserProfile: Profile
     {
         CreateMap<RegisterPost, User>();
         CreateMap<LoginPost, UserLogin>();
+        CreateMap<User, TokenData>();
     }
 
 }

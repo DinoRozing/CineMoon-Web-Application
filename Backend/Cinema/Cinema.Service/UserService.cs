@@ -4,8 +4,10 @@ using System.Text;
 using Cinema.Model;
 using Cinema.Repository.Common;
 using Cinema.Service.Common;
+using DTO.UserModel;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Npgsql;
 
 namespace Cinema.Service
 {
@@ -13,7 +15,6 @@ namespace Cinema.Service
     {
         private readonly IUserRepository _userRepository; 
         private readonly IConfiguration _configuration;
-        private readonly Guid userRoleId = new Guid("9a130690-f7b4-4ab6-b75a-a1348a9781dc");
 
         public UserService(IUserRepository userRepository, IConfiguration configuration)
         {
@@ -28,34 +29,40 @@ namespace Cinema.Service
             user.IsActive = true;
             user.DateCreated = DateTime.UtcNow;
             user.DateUpdated = user.DateCreated;
-            user.RoleId = userRoleId;
+            var roleName = "User";
+            user.RoleId = (Guid)await _userRepository.GetRoleIdByNameAsync(roleName);
             
             return await _userRepository.RegisterUserAsync(user);
         }
 
         public async Task<string> LoginUserAsync(UserLogin userLogin)
         {
-            var user = await _userRepository.GetUserByEmailAsync(userLogin.Email);
+            var tokenData = await _userRepository.GetUserByEmailAsync(userLogin.Email);
 
-            if (user == null)
+            if (tokenData == null)
             {
                 throw new Exception("User not found.");
             }
             
-            if (!BCrypt.Net.BCrypt.Verify(userLogin.Password, user.Password))
+            if (!BCrypt.Net.BCrypt.Verify(userLogin.Password, tokenData.Password))
             {
                 throw new Exception("Wrong password.");
             }
 
-            string token = CreateToken(user);
+            string token = CreateToken(tokenData);
             return token;
         }
 
-        private string CreateToken(User user)
+        private string CreateToken(TokenData user)
         {
             List<Claim> claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, user.Email)
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Name, user.Email),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim("FirstName", user.FirstName),
+                new Claim("LastName", user.LastName),
+                new Claim(ClaimTypes.Role, user.Role)
             };
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
                 _configuration.GetSection("AppSettings:Token").Value!));
