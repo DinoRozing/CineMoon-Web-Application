@@ -22,6 +22,6 @@ namespace Cinema.Model
         public Hall? Hall { get; set; }
         public ICollection<Ticket>? Tickets { get; set; }
         public ICollection<SeatReserved>? SeatsReserved { get; set; }
-        public List<ProjectionHall> ProjectionHalls { get; set; }
+        public List<ProjectionHall> ?ProjectionHalls { get; set; }
     }
 }

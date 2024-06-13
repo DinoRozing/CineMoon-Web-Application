@@ -74,5 +74,12 @@ namespace Cinema.WebApi.Controllers
 
             return Ok();
         }
+
+        [HttpGet("projections-with-halls")]
+        public async Task<IActionResult> GetAllProjectionsWithHallsAsync()
+        {
+            var projections = await _projectionService.GetAllProjectionsWithHallsAsync();
+            return Ok(projections);
+        }
     }
 }

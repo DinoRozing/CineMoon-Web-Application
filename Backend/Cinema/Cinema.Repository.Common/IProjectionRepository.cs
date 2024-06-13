@@ -9,5 +9,6 @@ namespace Cinema.Repository.Common
         Task<Projection?> GetProjectionByIdAsync(Guid id);
         Task UpdateProjectionAsync(Projection projection);
         Task DeleteProjectionAsync(Guid id);
+        Task<List<Projection>> GetAllProjectionsWithHallsAsync();
     }
 }
