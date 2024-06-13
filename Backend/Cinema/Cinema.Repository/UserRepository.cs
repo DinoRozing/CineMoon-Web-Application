@@ -1,5 +1,7 @@
+using AutoMapper;
 using Cinema.Model;
 using Cinema.Repository.Common;
+using DTO.UserModel;
 using Npgsql;
 
 namespace Cinema.Repository;
@@ -7,10 +9,13 @@ namespace Cinema.Repository;
 public class UserRepository: IUserRepository
 {
     private readonly string _connectionString;
+    private readonly IMapper _mapper;
 
-    public UserRepository(string connectionString)
+    public UserRepository(string connectionString, IMapper mapper)
     {
-        this._connectionString = connectionString;
+        _connectionString = connectionString;
+        _mapper = mapper;
+
     }
     
     public async Task<User> RegisterUserAsync(User user)
@@ -53,16 +58,35 @@ public class UserRepository: IUserRepository
             return user;
         
     }
-    
-    public async Task<User> GetUserByEmailAsync(string email)
+
+   
+    public async Task<Guid?> GetRoleIdByNameAsync(string roleName)
     {
         await using var connection = new NpgsqlConnection(_connectionString);
         await connection.OpenAsync();
 
         var query = @"
-                SELECT *
-                FROM ""User""
-                WHERE ""Email"" = @Email;";
+            SELECT ""Id""
+            FROM ""Role""
+            WHERE ""RoleName"" = @RoleName;";
+
+        await using var command = new NpgsqlCommand(query, connection);
+        command.Parameters.AddWithValue("@RoleName", roleName);
+
+        var roleId = await command.ExecuteScalarAsync() as Guid?;
+        return roleId;
+    }
+    
+    public async Task<TokenData> GetUserByEmailAsync(string email)
+    {
+        await using var connection = new NpgsqlConnection(_connectionString);
+        await connection.OpenAsync();
+
+        var query = @"
+            SELECT u.*, r.""RoleName""
+            FROM ""User"" u
+            LEFT JOIN ""Role"" r ON u.""RoleId"" = r.""Id""
+            WHERE u.""Email"" = @Email;";
 
         await using var command = new NpgsqlCommand(query, connection);
         command.Parameters.AddWithValue("@Email", email);
@@ -70,7 +94,7 @@ public class UserRepository: IUserRepository
         await using var reader = await command.ExecuteReaderAsync();
         if (await reader.ReadAsync())
         {
-            return new User
+            var user =  new User
             {
                 Id = reader.GetGuid(reader.GetOrdinal("Id")),
                 Email = reader.GetString(reader.GetOrdinal("Email")),
@@ -82,6 +106,9 @@ public class UserRepository: IUserRepository
                 DateCreated = reader.GetDateTime(reader.GetOrdinal("DateCreated")),
                 DateUpdated = reader.GetDateTime(reader.GetOrdinal("DateUpdated"))
             };
+            var tokenData = _mapper.Map<TokenData>(user);
+            tokenData.Role = reader.GetString(reader.GetOrdinal("RoleName")); 
+            return tokenData;
         }
 
         return null; 

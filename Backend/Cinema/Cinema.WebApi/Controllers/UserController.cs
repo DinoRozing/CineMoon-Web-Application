@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
 using Cinema.Service.Common;
 using DTO.UserModel;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Cinema.WebApi.Controllers
 {
@@ -54,6 +55,13 @@ namespace Cinema.WebApi.Controllers
             {
                 return StatusCode(500, ex.Message); 
             }
+        }
+        
+        
+        [HttpPost("test"), Authorize(Roles = "Admin")]
+        public async Task<IActionResult> TestRoute()
+        {
+            return Ok("radi");
         }
         
     }

@@ -396,3 +396,7 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+Backend/Cinema/Cinema.Repository/.idea/.idea.Cinema.dir/.idea/indexLayout.xml
+Backend/Cinema/Cinema.Repository/.idea/.idea.Cinema.dir/.idea/projectSettingsUpdater.xml
+Backend/Cinema/Cinema.Repository/.idea/.idea.Cinema.dir/.idea/vcs.xml
+Backend/Cinema/Cinema.Repository/.idea/.idea.Cinema.dir/.idea/workspace.xml
