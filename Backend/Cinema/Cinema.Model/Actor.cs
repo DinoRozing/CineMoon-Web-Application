@@ -16,5 +16,6 @@ namespace Cinema.Model
         public Guid CreatedByUserId { get; set; }
         public Guid UpdatedByUserId { get; set; }
         public ICollection<MovieActor>? MovieActors { get; set; }
+        
     }
 }

@@ -22,6 +22,7 @@ namespace Cinema.Model
         public Guid CreatedByUserId { get; set; }
         public Guid UpdatedByUserId { get; set; }
         public List<string>? ActorNames { get; set; } 
+        public ICollection<Actor>? Actors { get; set; }
 
     }
 }
