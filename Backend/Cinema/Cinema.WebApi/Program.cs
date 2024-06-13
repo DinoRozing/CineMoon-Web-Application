@@ -14,12 +14,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 string connectionString = builder.Configuration.GetSection("AppSettings").GetValue<String>("ConnectionString");
 
-var mapperConfig = new MapperConfiguration(mc =>
-{
-    mc.AddProfile(new UserProfile());
-});
-IMapper mapper = mapperConfig.CreateMapper();
-builder.Services.AddSingleton(mapper);
+builder.Services.AddAutoMapper(typeof(UserProfile), typeof(ReviewProfile));
 
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>

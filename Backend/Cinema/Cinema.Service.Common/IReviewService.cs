@@ -1,4 +1,5 @@
 ﻿using Cinema.Model;
+
 namespace Cinema.Service.Common
 {
     public interface IReviewService
