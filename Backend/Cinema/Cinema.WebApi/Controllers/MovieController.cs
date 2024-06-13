@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoMapper;
 using Cinema.Model;
 using Cinema.Service.Common;
 using Microsoft.AspNetCore.Mvc;
@@ -12,10 +13,12 @@ namespace Cinema.WebApi.Controllers
     public class MovieController : Controller
     {
         private readonly IMovieService _movieService;
+        private readonly IMapper _mapper;
 
-        public MovieController(IMovieService movieService)
+        public MovieController(IMovieService movieService, IMapper mapper)
         {
             _movieService = movieService ?? throw new ArgumentNullException(nameof(movieService));
+            _mapper = mapper;
         }
 
         [HttpPost]

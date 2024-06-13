@@ -37,5 +37,9 @@ namespace Cinema.Service
         {
             await _projectionRepository.DeleteProjectionAsync(id);
         }
+        public async Task<List<Projection>> GetAllProjectionsWithHallsAsync()
+        {
+            return await _projectionRepository.GetAllProjectionsWithHallsAsync();
+        }
     }
 }
