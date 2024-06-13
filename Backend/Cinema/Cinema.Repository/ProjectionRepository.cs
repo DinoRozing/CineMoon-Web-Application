@@ -125,5 +125,77 @@ namespace Cinema.Repository
             await connection.OpenAsync();
             await command.ExecuteNonQueryAsync();
         }
+
+        public async Task<List<Projection>> GetAllProjectionsWithHallsAsync()
+        {
+            var projections = new List<Projection>();
+
+            await using var connection = new NpgsqlConnection(connectionString);
+            var commandText = @"
+                SELECT p.*, ph.""Id"" as ""ProjectionHall.Id"", ph.""HallId"" as ""ProjectionHall.HallId"",
+                       h.""Id"" as ""Hall.Id"", h.""HallNumber"" as ""Hall.HallNumber""
+                FROM ""Projection"" p
+                LEFT JOIN ""ProjectionHall"" ph ON p.""Id"" = ph.""ProjectionId""
+                LEFT JOIN ""Hall"" h ON ph.""HallId"" = h.""Id""";
+
+            await using var command = new NpgsqlCommand(commandText, connection);
+            await connection.OpenAsync();
+            await using var reader = await command.ExecuteReaderAsync();
+
+            while (await reader.ReadAsync())
+            {
+                var projectionId = reader.GetGuid(reader.GetOrdinal("Id"));
+                var projection = projections.Find(p => p.Id == projectionId);
+
+                if (projection == null)
+                {
+                    projection = new Projection
+                    {
+                        Id = projectionId,
+                        Date = reader.GetDateTime(reader.GetOrdinal("Date")).Date,
+                        Time = reader.GetTimeSpan(reader.GetOrdinal("Time")),
+                        MovieId = reader.GetGuid(reader.GetOrdinal("MovieId")),
+                        UserId = reader.GetGuid(reader.GetOrdinal("UserId")),
+                        IsActive = reader.GetBoolean(reader.GetOrdinal("IsActive")),
+                        DateCreated = reader.GetDateTime(reader.GetOrdinal("DateCreated")),
+                        DateUpdated = reader.GetDateTime(reader.GetOrdinal("DateUpdated")),
+                        CreatedByUserId = reader.GetGuid(reader.GetOrdinal("CreatedByUserId")),
+                        UpdatedByUserId = reader.GetGuid(reader.GetOrdinal("UpdatedByUserId")),
+                        ProjectionHalls = new List<ProjectionHall>()
+                    };
+
+                    projections.Add(projection);
+                }
+
+                var projectionHallId = reader.GetGuid(reader.GetOrdinal("ProjectionHall.Id"));
+
+                if (projectionHallId != Guid.Empty)
+                {
+                    var hallId = reader.GetGuid(reader.GetOrdinal("Hall.Id"));
+                    var hall = new Hall
+                    {
+                        Id = hallId,
+                        HallNumber = reader.GetInt32(reader.GetOrdinal("Hall.HallNumber"))
+                    };
+
+                    var projectionHall = new ProjectionHall
+                    {
+                        Id = projectionHallId,
+                        ProjectionId = projectionId,
+                        HallId = hallId,
+                        IsActive = reader.GetBoolean(reader.GetOrdinal("IsActive")),
+                        DateCreated = reader.GetDateTime(reader.GetOrdinal("DateCreated")),
+                        DateUpdated = reader.GetDateTime(reader.GetOrdinal("DateUpdated")),
+                        CreatedByUserId = reader.GetGuid(reader.GetOrdinal("CreatedByUserId")),
+                        UpdatedByUserId = reader.GetGuid(reader.GetOrdinal("UpdatedByUserId")),
+                        Hall = hall
+                    };
+
+                    projection.ProjectionHalls.Add(projectionHall);
+                }
+            }
+
+            return projections;
+        }
     }
 }
