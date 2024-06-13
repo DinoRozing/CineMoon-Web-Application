@@ -4,5 +4,7 @@ namespace Cinema.Repository.Common;
 
 public interface IUserRepository
 {
-    Task<User> CreateUserAsync(User user);
+    Task<User> RegisterUserAsync(User user);
+    //Task<UserLogin> LoginUserAsync(UserLogin userLogin);
+    Task<User> GetUserByEmailAsync(string email);
 }

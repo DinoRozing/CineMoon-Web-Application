@@ -8,7 +8,8 @@ public class UserProfile: Profile
 {
     public UserProfile()
     {
-        CreateMap<UserPost, User>();
+        CreateMap<RegisterPost, User>();
+        CreateMap<LoginPost, UserLogin>();
     }
 
 }

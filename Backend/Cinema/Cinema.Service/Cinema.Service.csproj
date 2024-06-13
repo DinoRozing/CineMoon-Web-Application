@@ -12,4 +12,16 @@
     <ProjectReference Include="..\Cinema.Service.Common\Cinema.Service.Common.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="7.6.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.6.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Microsoft.Extensions.Configuration.Abstractions">
+      <HintPath>..\..\..\..\..\..\..\usr\local\share\dotnet\shared\Microsoft.AspNetCore.App\8.0.5\Microsoft.Extensions.Configuration.Abstractions.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

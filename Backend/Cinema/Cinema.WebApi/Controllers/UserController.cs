@@ -20,25 +20,41 @@ namespace Cinema.WebApi.Controllers
         }
         
 
-        [HttpPost]
-        public async Task<IActionResult> CreateUserAsync([FromBody] UserPost userPost)
+        [HttpPost("register")]
+        public async Task<IActionResult> RegisterUserAsync([FromBody] RegisterPost registerPost)
         {
             try
             {
-                
-                var user = _mapper.Map<User>(userPost);
+                var user = _mapper.Map<User>(registerPost);
                 user.Id = Guid.NewGuid();
                 user.DateCreated = DateTime.UtcNow;
                 user.DateUpdated = user.DateCreated;
+                var registeredUser = await _userService.RegisterUserAsync(user);
 
-                return Ok(user);
+                return Ok(registeredUser);
             }
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message); 
             }
-
-
         }
+        
+        [HttpPost("login")]
+        public async Task<IActionResult> LoginUserAsync([FromBody] LoginPost loginPost)
+        {
+            try
+            {
+                var user = _mapper.Map<UserLogin>(loginPost);
+                
+                var loggedUser = await _userService.LoginUserAsync(user);
+
+                return Ok(loggedUser);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message); 
+            }
+        }
+        
     }
 }
