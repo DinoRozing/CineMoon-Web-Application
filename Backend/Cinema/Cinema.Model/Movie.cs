@@ -24,5 +24,6 @@ namespace Cinema.Model
         public ICollection<Review>? Reviews { get; set; }
         public ICollection<MovieActor>? MovieActors { get; set; }
         public ICollection<Projection>? Projections { get; set; }
+        public ICollection<Actor>? Actors { get; set; }
     }
 }

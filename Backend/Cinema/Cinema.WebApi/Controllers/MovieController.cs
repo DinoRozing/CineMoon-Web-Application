@@ -77,5 +77,16 @@ namespace Cinema.WebApi.Controllers
 
             return Ok();
         }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetMovieWithActorsAsync(Guid id)
+        {
+            var movie = await _movieService.GetMovieWithActorsAsync(id);
+            if (movie == null)
+            {
+                return NotFound();
+            }
+            return Ok(movie);
+        }
     }
 }

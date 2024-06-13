@@ -12,5 +12,6 @@ namespace Cinema.Service.Common
         Task AddMovieAsync(Movie movie);
         Task UpdateMovieAsync(Movie movie);
         Task DeleteMovieAsync(Guid id);
+        Task<Movie> GetMovieWithActorsAsync(Guid movieId);
     }
 }

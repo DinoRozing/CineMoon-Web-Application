@@ -39,5 +39,10 @@ namespace Cinema.Service
         {
             await movieRepository.DeleteMovieAsync(id);
         }
+
+        public async Task<Movie> GetMovieWithActorsAsync(Guid movieId)
+        {
+            return await movieRepository.GetMovieWithActorsAsync(movieId);
+        }
     }
 }

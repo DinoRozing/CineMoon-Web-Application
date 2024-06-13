@@ -10,10 +10,12 @@ namespace Cinema.Repository
     public class MovieRepository : IMovieRepository
     {
         private readonly string connectionString;
+
         public MovieRepository(string connectionString)
         {
             this.connectionString = connectionString;
         }
+
         public async Task<Movie> GetMovieByIdAsync(Guid id)
         {
             using (var connection = new NpgsqlConnection(connectionString))
@@ -152,6 +154,75 @@ namespace Cinema.Repository
                     await command.ExecuteNonQueryAsync();
                 }
             }
+        }
+
+        public async Task<Movie> GetMovieWithActorsAsync(Guid movieId)
+        {
+            Movie movie = null;
+            using (var connection = new NpgsqlConnection(connectionString))
+            {
+                await connection.OpenAsync();
+
+                using (var movieCommand = new NpgsqlCommand(@"SELECT * FROM ""Movie"" WHERE ""Id"" = @MovieId", connection))
+                {
+                    movieCommand.Parameters.AddWithValue("MovieId", movieId);
+                    using (var reader = await movieCommand.ExecuteReaderAsync())
+                    {
+                        if (await reader.ReadAsync())
+                        {
+                            movie = new Movie
+                            {
+                                Id = reader.GetGuid(reader.GetOrdinal("Id")),
+                                Title = reader.GetString(reader.GetOrdinal("Title")),
+                                Description = reader.IsDBNull(reader.GetOrdinal("Description")) ? null : reader.GetString(reader.GetOrdinal("Description")),
+                                Duration = reader.GetInt32(reader.GetOrdinal("Duration")),
+                                Language = reader.IsDBNull(reader.GetOrdinal("Language")) ? null : reader.GetString(reader.GetOrdinal("Language")),
+                                CoverUrl = reader.IsDBNull(reader.GetOrdinal("CoverUrl")) ? null : reader.GetString(reader.GetOrdinal("CoverUrl")),
+                                TrailerUrl = reader.IsDBNull(reader.GetOrdinal("TrailerUrl")) ? null : reader.GetString(reader.GetOrdinal("TrailerUrl")),
+                                IsActive = reader.GetBoolean(reader.GetOrdinal("IsActive")),
+                                DateCreated = reader.GetDateTime(reader.GetOrdinal("DateCreated")),
+                                DateUpdated = reader.IsDBNull(reader.GetOrdinal("DateUpdated")) ? DateTime.MinValue : reader.GetDateTime(reader.GetOrdinal("DateUpdated")),
+                                CreatedByUserId = reader.IsDBNull(reader.GetOrdinal("CreatedByUserId")) ? Guid.Empty : reader.GetGuid(reader.GetOrdinal("CreatedByUserId")),
+                                UpdatedByUserId = reader.IsDBNull(reader.GetOrdinal("UpdatedByUserId")) ? Guid.Empty : reader.GetGuid(reader.GetOrdinal("UpdatedByUserId")),
+                            };
+                        }
+                    }
+                }
+
+                if (movie == null)
+                {
+                    return null;
+                }
+
+                using (var actorsCommand = new NpgsqlCommand(
+                    @"SELECT a.""Id"", a.""Name"", a.""IsActive"", a.""DateCreated"", a.""DateUpdated"", a.""CreatedByUserId"", a.""UpdatedByUserId"" 
+                      FROM ""Actor"" a 
+                      INNER JOIN ""MovieActor"" ma ON a.""Id"" = ma.""ActorId"" 
+                      WHERE ma.""MovieId"" = @MovieId", connection))
+                {
+                    actorsCommand.Parameters.AddWithValue("MovieId", movieId);
+                    using (var reader = await actorsCommand.ExecuteReaderAsync())
+                    {
+                        var actors = new List<Actor>();
+                        while (await reader.ReadAsync())
+                        {
+                            var actor = new Actor
+                            {
+                                Id = reader.GetGuid(reader.GetOrdinal("Id")),
+                                Name = reader.GetString(reader.GetOrdinal("Name")),
+                                IsActive = reader.GetBoolean(reader.GetOrdinal("IsActive")),
+                                DateCreated = reader.GetDateTime(reader.GetOrdinal("DateCreated")),
+                                DateUpdated = reader.GetDateTime(reader.GetOrdinal("DateUpdated")),
+                                CreatedByUserId = reader.GetGuid(reader.GetOrdinal("CreatedByUserId")),
+                                UpdatedByUserId = reader.GetGuid(reader.GetOrdinal("UpdatedByUserId"))
+                            };
+                            actors.Add(actor);
+                        }
+                        movie.Actors = actors;
+                    }
+                }
+            }
+            return movie;
         }
     }
 }
