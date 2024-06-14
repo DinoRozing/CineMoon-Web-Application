@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Cinema.Common\Cinema.Common.csproj" />
     <ProjectReference Include="..\Cinema.Model\Cinema.Model.csproj" />
     <ProjectReference Include="..\DTO\DTO.csproj" />
   </ItemGroup>

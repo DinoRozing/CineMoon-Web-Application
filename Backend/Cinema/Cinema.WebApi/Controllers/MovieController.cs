@@ -1,7 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using AutoMapper;
+using Cinema.Common;
 using Cinema.Model;
 using Cinema.Service.Common;
 using DTO.MovieModel;
@@ -44,7 +42,7 @@ namespace Cinema.WebApi.Controllers
             {
                 return StatusCode(500, ex.Message);
             }
-            
+
         }
 
         [HttpGet]
@@ -65,10 +63,45 @@ namespace Cinema.WebApi.Controllers
             return Ok(movie);
         }
 
+        [HttpGet]
+        [Route ("ByFilter")]
+        public async Task<IActionResult> GetFilteredMoviesAsync(Guid? movieId, string? genre, string? language, string sortBy = "Duration", string sortOrder = "DESC", int pageNumber = 1, int pageSize = 4)
+        {
+            try
+            {
+                var filtering = new MovieFiltering
+                {
+                    MovieId = movieId,
+                    Genre = genre,
+                    Language = language
+                };
+                
+                var sorting = new MovieSorting
+                {
+                    SortBy = sortBy,
+                    SortOrder = sortOrder
+                };
+
+                var paging = new MoviePaging
+                {
+                    PageNumber = pageNumber,
+                    PageSize = pageSize
+                };
+
+                var movies = await _movieService.GetFilteredMoviesAsync(filtering, sorting, paging);
+
+                return Ok(movies);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateMovieAsync(Guid id, [FromBody] MoviePut moviePut)
         {
-            
+
             var movie = _mapper.Map<Movie>(moviePut);
             await _movieService.UpdateMovieAsync(movie);
 
@@ -90,6 +123,6 @@ namespace Cinema.WebApi.Controllers
             return Ok();
         }
 
-        
+
     }
 }

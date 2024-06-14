@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+  <ProjectReference Include="..\Cinema.Common\Cinema.Common.csproj" />
   <ProjectReference Include="..\Cinema.Model\Cinema.Model.csproj" />
     <ProjectReference Include="..\Cinema.Repository.Common\Cinema.Repository.Common.csproj" />
     <ProjectReference Include="..\Cinema.Service.Common\Cinema.Service.Common.csproj" />

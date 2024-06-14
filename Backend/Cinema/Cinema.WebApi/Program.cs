@@ -78,11 +78,6 @@ builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
         .InstancePerLifetimeScope();
 
     containerBuilder
-        .RegisterType<SeatReservedRepository>()
-        .As<ISeatReservedRepository>()
-        .InstancePerLifetimeScope();
-
-    containerBuilder
         .RegisterType<SeatService>()
         .As<ISeatService>()
         .InstancePerLifetimeScope();

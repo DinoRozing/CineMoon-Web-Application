@@ -4,6 +4,7 @@ using Cinema.Service.Common;
 using System;
 using System.Threading.Tasks;
 using DTO.MovieModel;
+using Cinema.Common;
 
 namespace Cinema.Service
 {
@@ -26,6 +27,11 @@ namespace Cinema.Service
         public async Task<MovieGet> GetMovieByIdAsync(Guid id)
         {
             return await _movieRepository.GetMovieByIdAsync(id);
+        }
+
+        public async Task<IEnumerable<MovieGet>> GetFilteredMoviesAsync(MovieFiltering filtering, MovieSorting sorting, MoviePaging paging)
+        {
+            return await _movieRepository.GetFilteredMoviesAsync(filtering, sorting, paging);
         }
 
         public async Task AddMovieAsync(Movie movie)
