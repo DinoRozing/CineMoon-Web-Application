@@ -1,4 +1,4 @@
-﻿namespace DTO
+﻿namespace DTO.TicketModel
 {
     public class TicketRest
     {
