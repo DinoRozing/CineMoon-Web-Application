@@ -1,4 +1,5 @@
 using AutoMapper;
+using DTO;
 using Cinema.Model;
 using Cinema.Service.Common;
 using Microsoft.AspNetCore.Mvc;
