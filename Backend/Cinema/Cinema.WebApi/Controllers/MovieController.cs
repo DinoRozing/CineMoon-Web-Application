@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Cinema.Model;
 using Cinema.Service.Common;
+using DTO.MovieModel;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Cinema.WebApi.Controllers
@@ -13,19 +14,37 @@ namespace Cinema.WebApi.Controllers
     public class MovieController : Controller
     {
         private readonly IMovieService _movieService;
+        private readonly IActorService _actorService;
         private readonly IMapper _mapper;
 
-        public MovieController(IMovieService movieService, IMapper mapper)
+        public MovieController(IMovieService movieService, IActorService _actorService, IMapper mapper)
         {
-            _movieService = movieService ?? throw new ArgumentNullException(nameof(movieService));
+            _movieService = movieService;
             _mapper = mapper;
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddMovieAsync([FromBody] Movie movie)
+        public async Task<IActionResult> AddMovieAsync([FromBody] MoviePost moviePost)
         {
-            await _movieService.AddMovieAsync(movie);
-            return Ok();
+            try
+            {
+                var movie = _mapper.Map<Movie>(moviePost);
+                movie.Id = Guid.NewGuid();
+                movie.IsActive = true;
+                movie.DateCreated = DateTime.UtcNow;
+                movie.DateUpdated = DateTime.UtcNow;
+                movie.CreatedByUserId = movie.CreatedByUserId;
+                movie.UpdatedByUserId = movie.CreatedByUserId;
+
+                await _movieService.AddMovieAsync(movie);
+
+                return Ok("Movie created");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+            
         }
 
         [HttpGet]
@@ -47,21 +66,11 @@ namespace Cinema.WebApi.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateMovieAsync(Guid id, [FromBody] Movie movie)
+        public async Task<IActionResult> UpdateMovieAsync(Guid id, [FromBody] MoviePut moviePut)
         {
-            if (id != movie.Id)
-            {
-                return BadRequest("Movie ID mismatch");
-            }
-
-            try
-            {
-                await _movieService.UpdateMovieAsync(movie);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            
+            var movie = _mapper.Map<Movie>(moviePut);
+            await _movieService.UpdateMovieAsync(movie);
 
             return Ok();
         }
@@ -81,15 +90,6 @@ namespace Cinema.WebApi.Controllers
             return Ok();
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetMovieWithActorsAsync(Guid id)
-        {
-            var movie = await _movieService.GetMovieWithActorsAsync(id);
-            if (movie == null)
-            {
-                return NotFound();
-            }
-            return Ok(movie);
-        }
+        
     }
 }

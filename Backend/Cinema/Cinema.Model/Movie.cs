@@ -21,8 +21,8 @@ namespace Cinema.Model
         public DateTime DateUpdated { get; set; }
         public Guid CreatedByUserId { get; set; }
         public Guid UpdatedByUserId { get; set; }
-        public List<string>? ActorNames { get; set; } 
-        public ICollection<Actor>? Actors { get; set; }
+        
+        public List<string>? ActorNames { get; set; }
 
     }
 }
