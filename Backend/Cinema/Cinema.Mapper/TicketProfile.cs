@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Cinema.Model;
-using DTO;
+using DTO.TicketModel;
 
 namespace Cinema.Mapper
 {
