@@ -114,13 +114,18 @@ namespace Cinema.WebApi.Controllers
             try
             {
                 await _movieService.DeleteMovieAsync(id);
+                return Ok();
             }
             catch (ArgumentException ex)
             {
                 return BadRequest(ex.Message);
             }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
 
-            return Ok();
+           
         }
 
 

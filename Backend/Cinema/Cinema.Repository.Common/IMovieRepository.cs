@@ -14,7 +14,7 @@ namespace Cinema.Repository.Common
         Task<MovieGet> GetMovieByIdAsync(Guid id);
         Task<IEnumerable<MovieGet>> GetFilteredMoviesAsync(MovieFiltering filtering, MovieSorting sorting, MoviePaging paging);
         Task AddMovieAsync(Movie movie);
-        Task AddMovieActorAsync(Guid movieId, Guid actorId, Guid userId);
+        Task<bool> MovieExistsAsync(string title);
         Task UpdateMovieAsync(Movie movie);
         Task DeleteMovieAsync(Guid id);
        

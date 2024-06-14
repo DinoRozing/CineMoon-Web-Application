@@ -178,52 +178,69 @@ namespace Cinema.Repository
         {
             await using var connection = new NpgsqlConnection(_connectionString);
             await connection.OpenAsync();
-
-            var commandText = @"
-                INSERT INTO ""Movie"" 
-                (""Id"", ""Title"", ""Genre"", ""Description"", ""Duration"", ""Language"", ""CoverUrl"", ""TrailerUrl"", ""IsActive"", ""DateCreated"", ""DateUpdated"", ""CreatedByUserId"", ""UpdatedByUserId"") 
-                VALUES 
-                (@Id, @Title, @Genre, @Description, @Duration, @Language, @CoverUrl, @TrailerUrl, @IsActive, @DateCreated, @DateUpdated, @CreatedByUserId, @UpdatedByUserId);";
-
-            await using var command = new NpgsqlCommand(commandText, connection);
-            command.Parameters.AddWithValue("@Id", movie.Id);
-            command.Parameters.AddWithValue("@Title", movie.Title);
-            command.Parameters.AddWithValue("@Genre", movie.Genre);
-            command.Parameters.AddWithValue("@Description", movie.Description);
-            command.Parameters.AddWithValue("@Duration", movie.Duration);
-            command.Parameters.AddWithValue("@Language", movie.Language);
-            command.Parameters.AddWithValue("@CoverUrl", movie.CoverUrl);
-            command.Parameters.AddWithValue("@TrailerUrl", movie.TrailerUrl);
-            command.Parameters.AddWithValue("@IsActive", movie.IsActive);
-            command.Parameters.AddWithValue("@DateCreated", movie.DateCreated);
-            command.Parameters.AddWithValue("@DateUpdated", movie.DateUpdated);
-            command.Parameters.AddWithValue("@CreatedByUserId", movie.CreatedByUserId);
-            command.Parameters.AddWithValue("@UpdatedByUserId", movie.UpdatedByUserId);
-
-            await command.ExecuteNonQueryAsync();
+            
+            try
+            {
+                var addMovieCommandText = @"
+                    INSERT INTO ""Movie"" 
+                    (""Id"", ""Title"", ""Genre"", ""Description"", ""Duration"", ""Language"", 
+                     ""CoverUrl"", ""TrailerUrl"", ""IsActive"", ""DateCreated"", ""DateUpdated"", 
+                     ""CreatedByUserId"", ""UpdatedByUserId"")
+                    VALUES 
+                    (@Id, @Title, @Genre, @Description, @Duration, @Language, 
+                     @CoverUrl, @TrailerUrl, @IsActive, @DateCreated, @DateUpdated, 
+                     @CreatedByUserId, @UpdatedByUserId)";
+                
+                await using var addMovieCommand = new NpgsqlCommand(addMovieCommandText, connection);
+                addMovieCommand.Parameters.AddWithValue("@Id", movie.Id);
+                addMovieCommand.Parameters.AddWithValue("@Title", movie.Title);
+                addMovieCommand.Parameters.AddWithValue("@Genre", movie.Genre);
+                addMovieCommand.Parameters.AddWithValue("@Description", movie.Description);
+                addMovieCommand.Parameters.AddWithValue("@Duration", movie.Duration);
+                addMovieCommand.Parameters.AddWithValue("@Language", movie.Language);
+                addMovieCommand.Parameters.AddWithValue("@CoverUrl", movie.CoverUrl);
+                addMovieCommand.Parameters.AddWithValue("@TrailerUrl", movie.TrailerUrl);
+                addMovieCommand.Parameters.AddWithValue("@IsActive", movie.IsActive);
+                addMovieCommand.Parameters.AddWithValue("@DateCreated", movie.DateCreated);
+                addMovieCommand.Parameters.AddWithValue("@DateUpdated", movie.DateUpdated);
+                addMovieCommand.Parameters.AddWithValue("@CreatedByUserId", movie.CreatedByUserId);
+                addMovieCommand.Parameters.AddWithValue("@UpdatedByUserId", movie.UpdatedByUserId);
+                
+                await addMovieCommand.ExecuteNonQueryAsync();
+                
+                foreach (var actorId in movie.ActorId)
+                {
+                    var addMovieActorCommandText = @"
+                        INSERT INTO ""MovieActor"" 
+                        (""MovieId"", ""ActorId"", ""CreatedByUserId"")
+                        VALUES 
+                        (@MovieId, @ActorId, @CreatedByUserId)";
+                    
+                    await using var addMovieActorCommand = new NpgsqlCommand(addMovieActorCommandText, connection);
+                    addMovieActorCommand.Parameters.AddWithValue("@MovieId", movie.Id);
+                    addMovieActorCommand.Parameters.AddWithValue("@ActorId", actorId);
+                    addMovieActorCommand.Parameters.AddWithValue("@CreatedByUserId", movie.CreatedByUserId);
+                    
+                    await addMovieActorCommand.ExecuteNonQueryAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error adding movie", ex);
+            }
         }
         
-        public async Task AddMovieActorAsync(Guid movieId, Guid actorId, Guid userId)
+        public async Task<bool> MovieExistsAsync(string title)
         {
             await using var connection = new NpgsqlConnection(_connectionString);
             await connection.OpenAsync();
-
-            var commandText = @"
-                INSERT INTO ""MovieActor"" 
-                (""Id"", ""MovieId"", ""ActorId"", ""DateCreated"", ""DateUpdated"", ""CreatedByUserId"", ""UpdatedByUserId"") 
-                VALUES 
-                (@Id, @MovieId, @ActorId, @DateCreated, @DateUpdated, @CreatedByUserId, @UpdatedByUserId);";
-
+    
+            var commandText = @"SELECT COUNT(*) FROM ""Movie"" WHERE ""Title"" = @Title";
             await using var command = new NpgsqlCommand(commandText, connection);
-            command.Parameters.AddWithValue("@Id", Guid.NewGuid());
-            command.Parameters.AddWithValue("@MovieId", movieId);
-            command.Parameters.AddWithValue("@ActorId", actorId);
-            command.Parameters.AddWithValue("@DateCreated", DateTime.UtcNow);
-            command.Parameters.AddWithValue("@DateUpdated", DateTime.UtcNow);
-            command.Parameters.AddWithValue("@CreatedByUserId", userId);
-            command.Parameters.AddWithValue("@UpdatedByUserId", userId);
-
-            await command.ExecuteNonQueryAsync();
+            command.Parameters.AddWithValue("@Title", title);
+    
+            var count = (long)await command.ExecuteScalarAsync();
+            return count > 0;
         }
 
         public async Task UpdateMovieAsync(Movie movie)
