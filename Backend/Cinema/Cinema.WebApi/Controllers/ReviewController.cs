@@ -49,7 +49,10 @@ namespace Cinema.WebApi.Controllers
 
             var review = _mapper.Map<Review>(postReviewRest);
             await _reviewService.AddReviewAsync(review);
-            var reviewRest = _mapper.Map<GetReviewRest>(review);
+
+            var createdReview = await _reviewService.GetReviewByIdAsync(review.Id);
+            var reviewRest = _mapper.Map<GetReviewRest>(createdReview);
+
             return Created(string.Empty, reviewRest);
         }
 

@@ -1,6 +1,7 @@
 ﻿using Cinema.Model;
 using Cinema.Repository.Common;
 using Npgsql;
+
 namespace Cinema.Repository
 {
     public class ReviewRepository : IReviewRepository
@@ -18,12 +19,17 @@ namespace Cinema.Repository
             using (var conn = new NpgsqlConnection(_connectionString))
             {
                 await conn.OpenAsync();
-                using (var command = new NpgsqlCommand("SELECT * FROM \"Review\"", conn))
+                var commandText = @"
+                    SELECT r.*, u.""FirstName""
+                    FROM ""Review"" r
+                    JOIN ""User"" u ON r.""UserId"" = u.""Id"";";
+
+                using (var command = new NpgsqlCommand(commandText, conn))
                 using (var reader = await command.ExecuteReaderAsync())
                 {
                     while (await reader.ReadAsync())
                     {
-                        reviews.Add(new Review
+                        var review = new Review
                         {
                             Id = reader.GetGuid(reader.GetOrdinal("Id")),
                             Description = reader.GetString(reader.GetOrdinal("Description")),
@@ -34,8 +40,10 @@ namespace Cinema.Repository
                             DateCreated = reader.GetDateTime(reader.GetOrdinal("DateCreated")),
                             DateUpdated = reader.GetDateTime(reader.GetOrdinal("DateUpdated")),
                             CreatedByUserId = reader.GetGuid(reader.GetOrdinal("CreatedByUserId")),
-                            UpdatedByUserId = reader.GetGuid(reader.GetOrdinal("UpdatedByUserId"))
-                        });
+                            UpdatedByUserId = reader.GetGuid(reader.GetOrdinal("UpdatedByUserId")),
+                            FirstName = reader.GetString(reader.GetOrdinal("FirstName"))
+                        };
+                        reviews.Add(review);
                     }
                 }
             }
@@ -48,7 +56,13 @@ namespace Cinema.Repository
             using (var conn = new NpgsqlConnection(_connectionString))
             {
                 await conn.OpenAsync();
-                using (var command = new NpgsqlCommand("SELECT * FROM \"Review\" WHERE \"Id\" = @Id", conn))
+                var commandText = @"
+                    SELECT r.*, u.""FirstName""
+                    FROM ""Review"" r
+                    JOIN ""User"" u ON r.""UserId"" = u.""Id""
+                    WHERE r.""Id"" = @Id;";
+
+                using (var command = new NpgsqlCommand(commandText, conn))
                 {
                     command.Parameters.AddWithValue("Id", id);
                     using (var reader = await command.ExecuteReaderAsync())
@@ -66,7 +80,8 @@ namespace Cinema.Repository
                                 DateCreated = reader.GetDateTime(reader.GetOrdinal("DateCreated")),
                                 DateUpdated = reader.GetDateTime(reader.GetOrdinal("DateUpdated")),
                                 CreatedByUserId = reader.GetGuid(reader.GetOrdinal("CreatedByUserId")),
-                                UpdatedByUserId = reader.GetGuid(reader.GetOrdinal("UpdatedByUserId"))
+                                UpdatedByUserId = reader.GetGuid(reader.GetOrdinal("UpdatedByUserId")),
+                                FirstName = reader.GetString(reader.GetOrdinal("FirstName"))
                             };
                         }
                     }
