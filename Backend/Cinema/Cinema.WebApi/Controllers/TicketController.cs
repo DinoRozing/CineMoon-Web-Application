@@ -1,6 +1,9 @@
+using AutoMapper;
+using DTO;
 using Cinema.Model;
 using Cinema.Service.Common;
 using Microsoft.AspNetCore.Mvc;
+using DTO.TicketModel;
 
 namespace Cinema.WebApi.Controllers
 {
@@ -9,22 +12,26 @@ namespace Cinema.WebApi.Controllers
     public class TicketController : Controller
     {
         private readonly ITicketService _ticketService;
-        public TicketController(ITicketService ticketService)
+        private readonly IMapper _mapper;
+        public TicketController(ITicketService ticketService, IMapper mapper)
         {
             this._ticketService = ticketService;
+            _mapper = mapper;
         }
         
         [HttpPost]
-        public async Task<IActionResult> CreateTicketAsync([FromBody] Ticket ticket)
+        public async Task<IActionResult> CreateTicketAsync([FromBody] TicketRest ticketRest)
         {
             try
             {
+                var ticket = _mapper.Map<Ticket>(ticketRest);
                 var createdTicket = await _ticketService.CreateTicketAsync(ticket);
-                return Ok(createdTicket);
+                var createdTicketRest = _mapper.Map<TicketRest>(createdTicket);
+                return Ok(createdTicketRest);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message); // 500 Internal Server Error
+                return StatusCode(500, ex.Message); 
             }
         }
         
@@ -34,6 +41,7 @@ namespace Cinema.WebApi.Controllers
             try
             {
                 var tickets = await _ticketService.GetAllTicketsAsync();
+                var ticketRest = _mapper.Map<IEnumerable<TicketRest>>(tickets);
                 return Ok(tickets);
             }
             catch (Exception ex)
@@ -52,6 +60,7 @@ namespace Cinema.WebApi.Controllers
                 {
                     return NotFound(); 
                 }
+                var ticketRest = _mapper.Map<TicketRest>(ticket);
                 return Ok(ticket); 
             }
             catch (Exception ex)
@@ -73,11 +82,5 @@ namespace Cinema.WebApi.Controllers
                 return StatusCode(500, ex.Message); 
             }
         }
-        
-        
-        
-        
-        
     }
-    
 }
