@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Cinema.Model;
 using DTO;
+using DTO.ReviewModel;
 
 namespace Cinema.Mapper
 {
@@ -8,7 +9,10 @@ namespace Cinema.Mapper
     {
         public ReviewProfile()
         {
-            CreateMap<Review, ReviewRest>().ReverseMap();
+            CreateMap<Review, GetReviewRest>();
+            CreateMap<PostReviewRest, Review>();
+            CreateMap<PutReviewRest, Review>();
+            CreateMap<Review, GetReviewRest>().ReverseMap();
         }
     }
 }

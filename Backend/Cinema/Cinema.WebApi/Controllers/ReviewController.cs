@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
-using DTO;
 using Cinema.Model;
 using Cinema.Service.Common;
+using DTO.ReviewModel;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Cinema.WebApi.Controllers
 {
-    [ApiController]
     [Route("[controller]")]
+    [ApiController]
     public class ReviewController : ControllerBase
     {
         private readonly IReviewService _reviewService;
@@ -20,49 +20,68 @@ namespace Cinema.WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllReviewsAsync()
+        public async Task<ActionResult<IEnumerable<GetReviewRest>>> GetAllReviewsAsync()
         {
             var reviews = await _reviewService.GetAllReviewsAsync();
-            var reviewRests = _mapper.Map<IEnumerable<ReviewRest>>(reviews);
+            var reviewRests = _mapper.Map<IEnumerable<GetReviewRest>>(reviews);
             return Ok(reviewRests);
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetReviewByIdAsync(Guid id)
+        public async Task<ActionResult<GetReviewRest>> GetReviewByIdAsync(Guid id)
         {
             var review = await _reviewService.GetReviewByIdAsync(id);
             if (review == null)
             {
                 return NotFound();
             }
-            var reviewRest = _mapper.Map<ReviewRest>(review);
+            var reviewRest = _mapper.Map<GetReviewRest>(review);
             return Ok(reviewRest);
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddReviewAsync([FromBody] ReviewRest reviewRest)
+        public async Task<ActionResult<GetReviewRest>> AddReviewAsync([FromBody] PostReviewRest postReviewRest)
         {
-            var review = _mapper.Map<Review>(reviewRest);
+            if (postReviewRest == null)
+            {
+                return BadRequest("Review data is null");
+            }
+
+            var review = _mapper.Map<Review>(postReviewRest);
             await _reviewService.AddReviewAsync(review);
-            return Ok();
+            var reviewRest = _mapper.Map<GetReviewRest>(review);
+            return Created(string.Empty, reviewRest);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateReviewAsync(Guid id, [FromBody] ReviewRest reviewRest)
+        public async Task<IActionResult> UpdateReviewAsync(Guid id, [FromBody] PutReviewRest putReviewRest)
         {
-            if (id != reviewRest.Id)
+            if (putReviewRest == null)
             {
-                return BadRequest();
+                return BadRequest("Review data is null");
             }
 
-            var review = _mapper.Map<Review>(reviewRest);
-            await _reviewService.UpdateReviewAsync(review);
+            var existingReview = await _reviewService.GetReviewByIdAsync(id);
+            if (existingReview == null)
+            {
+                return NotFound();
+            }
+
+            _mapper.Map(putReviewRest, existingReview);
+            existingReview.DateUpdated = DateTime.UtcNow;
+
+            await _reviewService.UpdateReviewAsync(existingReview);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteReviewAsync(Guid id)
         {
+            var review = await _reviewService.GetReviewByIdAsync(id);
+            if (review == null)
+            {
+                return NotFound();
+            }
             await _reviewService.DeleteReviewAsync(id);
             return NoContent();
         }
