@@ -9,5 +9,11 @@
         public bool IsActive { get; set; }
         public Guid CreatedByUserId { get; set; }
         public Guid UpdatedByUserId { get; set; }
+        public List<PostProjectionHallRest> ProjectionHalls { get; set; } = new List<PostProjectionHallRest>();
+    }
+
+    public class PostProjectionHallRest
+    {
+        public Guid HallId { get; set; }
     }
 }

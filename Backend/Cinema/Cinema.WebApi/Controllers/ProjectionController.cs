@@ -1,8 +1,11 @@
-﻿using Cinema.Model;
-using AutoMapper;
+﻿using AutoMapper;
+using Cinema.Model;
 using Cinema.Service.Common;
 using DTO.ProjectionModel;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Cinema.WebApi.Controllers
 {
@@ -40,23 +43,6 @@ namespace Cinema.WebApi.Controllers
             return Ok(projectionRest);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> AddProjectionAsync([FromBody] PostProjectionRest postProjectionRest)
-        {
-            if (postProjectionRest == null)
-            {
-                return BadRequest("Projection data is null");
-            }
-
-            var projection = _mapper.Map<Projection>(postProjectionRest);
-            await _projectionService.AddProjectionAsync(projection);
-
-            var createdProjection = await _projectionService.GetProjectionByIdAsync(projection.Id);
-            var projectionRest = _mapper.Map<GetProjectionRest>(createdProjection);
-
-            return Created(string.Empty, projectionRest);
-        }
-
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateProjectionAsync(Guid id, [FromBody] PutProjectionRest putProjectionRest)
         {
@@ -75,6 +61,23 @@ namespace Cinema.WebApi.Controllers
 
             await _projectionService.UpdateProjectionAsync(existingProjection);
             return NoContent();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddProjectionAsync([FromBody] PostProjectionRest postProjectionRest)
+        {
+            if (postProjectionRest == null)
+            {
+                return BadRequest("Projection data is null");
+            }
+
+            var projection = _mapper.Map<Projection>(postProjectionRest);
+            await _projectionService.AddProjectionAsync(projection);
+
+            var createdProjection = await _projectionService.GetProjectionByIdAsync(projection.Id);
+            var projectionRest = _mapper.Map<GetProjectionRest>(createdProjection);
+
+            return Created(string.Empty, projectionRest);
         }
 
         [HttpDelete("{id}")]

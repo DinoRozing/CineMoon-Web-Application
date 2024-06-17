@@ -9,8 +9,9 @@ namespace Cinema.Mapper
         public ProjectionProfile()
         {
             CreateMap<Projection, GetProjectionRest>();
-            CreateMap<PostProjectionRest, Projection>();
             CreateMap<PutProjectionRest, Projection>();
+            CreateMap<PostProjectionRest, Projection>();
+            CreateMap<PostProjectionHallRest, ProjectionHall>();
         }
     }
 }

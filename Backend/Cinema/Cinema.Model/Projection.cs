@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Cinema.Model
+﻿namespace Cinema.Model
 {
     public class Projection
     {
@@ -22,6 +16,6 @@ namespace Cinema.Model
         public Hall? Hall { get; set; }
         public ICollection<Ticket>? Tickets { get; set; }
         public ICollection<SeatReserved>? SeatsReserved { get; set; }
-        public List<ProjectionHall> ProjectionHalls { get; set; }
+        public List<ProjectionHall> ProjectionHalls { get; set; } = new List<ProjectionHall>();
     }
 }

@@ -13,7 +13,7 @@ namespace Cinema.Service
 
         public ProjectionService(IProjectionRepository projectionRepository)
         {
-            this._projectionRepository = projectionRepository;
+            _projectionRepository = projectionRepository;
         }
 
         public async Task<List<Projection>> GetAllProjectionsAsync()
@@ -32,12 +32,23 @@ namespace Cinema.Service
             projection.DateCreated = DateTime.UtcNow;
             projection.DateUpdated = DateTime.UtcNow;
 
+            foreach (var projectionHall in projection.ProjectionHalls)
+            {
+                projectionHall.Id = Guid.NewGuid();
+                projectionHall.ProjectionId = projection.Id;
+            }
+
             await _projectionRepository.AddProjectionAsync(projection);
         }
 
         public async Task UpdateProjectionAsync(Projection projection)
         {
             projection.DateUpdated = DateTime.UtcNow;
+
+            if (projection.ProjectionHalls == null)
+            {
+                projection.ProjectionHalls = new List<ProjectionHall>();
+            }
 
             await _projectionRepository.UpdateProjectionAsync(projection);
         }
