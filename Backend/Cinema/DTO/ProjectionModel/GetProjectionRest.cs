@@ -1,6 +1,6 @@
-﻿namespace Cinema.Model
+﻿namespace DTO.ProjectionModel
 {
-    public class Projection
+    public class GetProjectionRest
     {
         public Guid Id { get; set; }
         public DateTime Date { get; set; }
@@ -12,10 +12,5 @@
         public DateTime DateUpdated { get; set; }
         public Guid CreatedByUserId { get; set; }
         public Guid UpdatedByUserId { get; set; }
-        public Movie? Movie { get; set; }
-        public Hall? Hall { get; set; }
-        public ICollection<Ticket>? Tickets { get; set; }
-        public ICollection<SeatReserved>? SeatsReserved { get; set; }
-        public List<ProjectionHall> ProjectionHalls { get; set; } = new List<ProjectionHall>();
     }
 }

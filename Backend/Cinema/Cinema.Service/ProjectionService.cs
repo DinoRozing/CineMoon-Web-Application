@@ -1,6 +1,9 @@
 ﻿using Cinema.Model;
 using Cinema.Repository.Common;
 using Cinema.Service.Common;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Cinema.Service
 {
@@ -10,7 +13,7 @@ namespace Cinema.Service
 
         public ProjectionService(IProjectionRepository projectionRepository)
         {
-            this._projectionRepository = projectionRepository;
+            _projectionRepository = projectionRepository;
         }
 
         public async Task<List<Projection>> GetAllProjectionsAsync()
@@ -25,21 +28,34 @@ namespace Cinema.Service
 
         public async Task AddProjectionAsync(Projection projection)
         {
+            projection.Id = Guid.NewGuid();
+            projection.DateCreated = DateTime.UtcNow;
+            projection.DateUpdated = DateTime.UtcNow;
+
+            foreach (var projectionHall in projection.ProjectionHalls)
+            {
+                projectionHall.Id = Guid.NewGuid();
+                projectionHall.ProjectionId = projection.Id;
+            }
+
             await _projectionRepository.AddProjectionAsync(projection);
         }
 
         public async Task UpdateProjectionAsync(Projection projection)
         {
+            projection.DateUpdated = DateTime.UtcNow;
+
+            if (projection.ProjectionHalls == null)
+            {
+                projection.ProjectionHalls = new List<ProjectionHall>();
+            }
+
             await _projectionRepository.UpdateProjectionAsync(projection);
         }
 
         public async Task DeleteProjectionAsync(Guid id)
         {
             await _projectionRepository.DeleteProjectionAsync(id);
-        }
-        public async Task<List<Projection>> GetAllProjectionsWithHallsAsync()
-        {
-            return await _projectionRepository.GetAllProjectionsWithHallsAsync();
         }
     }
 }

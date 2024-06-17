@@ -1,85 +1,95 @@
-﻿using Cinema.Model;
+﻿using AutoMapper;
+using Cinema.Model;
 using Cinema.Service.Common;
+using DTO.ProjectionModel;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Cinema.WebApi.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class ProjectionController : Controller
+    public class ProjectionController : ControllerBase
     {
         private readonly IProjectionService _projectionService;
+        private readonly IMapper _mapper;
 
-        public ProjectionController(IProjectionService projectionService)
+        public ProjectionController(IProjectionService projectionService, IMapper mapper)
         {
             _projectionService = projectionService ?? throw new ArgumentNullException(nameof(projectionService));
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> AddProjectionAsync([FromBody] Projection projection)
-        {
-            await _projectionService.AddProjectionAsync(projection);
-            return Ok();
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllProjectionsAsync()
+        public async Task<ActionResult<IEnumerable<GetProjectionRest>>> GetAllProjectionsAsync()
         {
             var projections = await _projectionService.GetAllProjectionsAsync();
-            return Ok(projections);
+            var projectionRests = _mapper.Map<IEnumerable<GetProjectionRest>>(projections);
+            return Ok(projectionRests);
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetProjectionByIdAsync(Guid id)
+        public async Task<ActionResult<GetProjectionRest>> GetProjectionByIdAsync(Guid id)
         {
             var projection = await _projectionService.GetProjectionByIdAsync(id);
             if (projection == null)
             {
                 return NotFound();
             }
-            return Ok(projection);
+
+            var projectionRest = _mapper.Map<GetProjectionRest>(projection);
+            return Ok(projectionRest);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateProjectionAsync(Guid id, [FromBody] Projection projection)
+        public async Task<IActionResult> UpdateProjectionAsync(Guid id, [FromBody] PutProjectionRest putProjectionRest)
         {
-            if (id != projection.Id)
+            if (putProjectionRest == null)
             {
-                return BadRequest("Projection ID mismatch");
+                return BadRequest("Projection data is null");
             }
 
-            try
+            var existingProjection = await _projectionService.GetProjectionByIdAsync(id);
+            if (existingProjection == null)
             {
-                await _projectionService.UpdateProjectionAsync(projection);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ex.Message);
+                return NotFound();
             }
 
-            return Ok();
+            _mapper.Map(putProjectionRest, existingProjection);
+
+            await _projectionService.UpdateProjectionAsync(existingProjection);
+            return NoContent();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddProjectionAsync([FromBody] PostProjectionRest postProjectionRest)
+        {
+            if (postProjectionRest == null)
+            {
+                return BadRequest("Projection data is null");
+            }
+
+            var projection = _mapper.Map<Projection>(postProjectionRest);
+            await _projectionService.AddProjectionAsync(projection);
+
+            var createdProjection = await _projectionService.GetProjectionByIdAsync(projection.Id);
+            var projectionRest = _mapper.Map<GetProjectionRest>(createdProjection);
+
+            return Created(string.Empty, projectionRest);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProjectionAsync(Guid id)
         {
-            try
+            var projection = await _projectionService.GetProjectionByIdAsync(id);
+            if (projection == null)
             {
-                await _projectionService.DeleteProjectionAsync(id);
+                return NotFound();
             }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-
-            return Ok();
-        }
-
-        [HttpGet("projections-with-halls")]
-        public async Task<IActionResult> GetAllProjectionsWithHallsAsync()
-        {
-            var projections = await _projectionService.GetAllProjectionsWithHallsAsync();
-            return Ok(projections);
+            await _projectionService.DeleteProjectionAsync(id);
+            return NoContent();
         }
     }
 }
