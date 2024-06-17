@@ -32,17 +32,7 @@ namespace Cinema.Service
         {
              await _movieRepository.AddActorToMovieAsync(movieId, actorId);
         }
-        public async Task<List<MovieGet>> GetAllMoviesAsync()
-        {
-            return await _movieRepository.GetAllMoviesAsync();
-        }
         
-        
-        public async Task<MovieGet> GetMovieByIdAsync(Guid id)
-        {
-            return await _movieRepository.GetMovieByIdAsync(id);
-        }
-
         public async Task<IEnumerable<MovieGet>> GetFilteredMoviesAsync(MovieFiltering filtering, MovieSorting sorting, MoviePaging paging)
         {
             return await _movieRepository.GetFilteredMoviesAsync(filtering, sorting, paging);

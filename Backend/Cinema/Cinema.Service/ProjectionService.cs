@@ -10,10 +10,12 @@ namespace Cinema.Service
     public class ProjectionService : IProjectionService
     {
         private readonly IProjectionRepository _projectionRepository;
+        private readonly IMovieRepository _movieRepository;
 
-        public ProjectionService(IProjectionRepository projectionRepository)
+        public ProjectionService(IProjectionRepository projectionRepository, IMovieRepository movieRepository)
         {
-            _projectionRepository = projectionRepository;
+            this._projectionRepository = projectionRepository;
+            this._movieRepository = movieRepository;
         }
 
         public async Task<List<Projection>> GetAllProjectionsAsync()

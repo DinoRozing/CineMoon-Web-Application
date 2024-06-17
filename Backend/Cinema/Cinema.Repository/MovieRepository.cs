@@ -104,54 +104,6 @@ namespace Cinema.Repository
             }
         }
         
-        
-
-        
-        public async Task<List<MovieGet>> GetAllMoviesAsync()
-        {
-            var movies = new List<MovieGet>();
-
-            await using var connection = new NpgsqlConnection(_connectionString);
-            await connection.OpenAsync();
-
-            var commandText = @"
-                            SELECT 
-                                m.*, 
-                                string_agg(a.""Name"", ', ') AS ""ActorNames"",
-                                g.""Name"" AS ""GenreName"",
-                                l.""Name"" AS ""LanguageName""
-                            FROM ""Movie"" m
-                            LEFT JOIN ""MovieActor"" ma ON m.""Id"" = ma.""MovieId""
-                            LEFT JOIN ""Actor"" a ON ma.""ActorId"" = a.""Id""
-                            LEFT JOIN ""Genre"" g ON m.""GenreId"" = g.""Id""
-                            LEFT JOIN ""Language"" l ON m.""LanguageId"" = l.""Id""
-                            GROUP BY m.""Id"", g.""Name"", l.""Name""";
-
-            await using var command = new NpgsqlCommand(commandText, connection);
-            await using var reader = await command.ExecuteReaderAsync();
-
-            while (await reader.ReadAsync())
-            {
-                var movieGet = new MovieGet
-                {
-                    MovieId = reader.GetGuid(reader.GetOrdinal("Id")),
-                    Title = reader.GetString(reader.GetOrdinal("Title")),
-                    Genre = reader.GetString(reader.GetOrdinal("GenreName")), // Dobivanje naziva žanra
-                    Description = reader.GetString(reader.GetOrdinal("Description")),
-                    Duration = reader.GetInt32(reader.GetOrdinal("Duration")),
-                    Language = reader.GetString(reader.GetOrdinal("LanguageName")), // Dobivanje naziva jezika
-                    CoverUrl = reader.GetString(reader.GetOrdinal("CoverUrl")),
-                    TrailerUrl = reader.GetString(reader.GetOrdinal("TrailerUrl")),
-                    ActorNames = [reader.GetString(reader.GetOrdinal("ActorNames"))]
-                };
-
-                movies.Add(movieGet);
-            }
-
-            return movies;
-        }
-
-        
         public async Task<MovieGet> GetMovieByIdAsync(Guid id)
         {
             var connection = new NpgsqlConnection(_connectionString);
