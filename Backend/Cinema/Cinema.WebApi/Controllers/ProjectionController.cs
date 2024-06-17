@@ -21,6 +21,8 @@ namespace Cinema.WebApi.Controllers
             await _projectionService.AddProjectionAsync(projection);
             return Ok();
         }
+        
+        
 
         [HttpGet]
         public async Task<IActionResult> GetAllProjectionsAsync()
@@ -41,6 +43,7 @@ namespace Cinema.WebApi.Controllers
         }
 
         [HttpPut("{id}")]
+        
         public async Task<IActionResult> UpdateProjectionAsync(Guid id, [FromBody] Projection projection)
         {
             if (id != projection.Id)

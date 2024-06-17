@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DTO.HallModel;
 
 namespace Cinema.Repository.Common
 {
@@ -12,6 +13,7 @@ namespace Cinema.Repository.Common
         Task AddHallAsync(Hall hall);
         Task<IEnumerable<Hall>> GetAllHallsAsync();
         Task<Hall?> GetHallByIdAsync(Guid id);
+        Task<List<AvailableHallGet>> GetAvailableHallsAsync(DateOnly date, TimeOnly startTime, TimeOnly endTime);
         Task UpdateHallAsync(Hall hall);
         Task DeleteHallAsync(Guid id);
     }
