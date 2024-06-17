@@ -42,9 +42,9 @@ INSERT INTO "Projection" ("Date", "Time", "MovieId", "UserId", "IsActive")
 VALUES 
 ('2024-06-20', '19:00:00', (SELECT "Id" FROM "Movie" WHERE "Title" = 'Example Movie'), (SELECT "Id" FROM "User" WHERE "Email" = 'admin@example.com'), TRUE);
 
-INSERT INTO "Payment" ("TotalPrice", "PaymentDate", "IsActive")
+INSERT INTO "Payment" ("TotalPrice", "IsActive")
 VALUES 
-(10.00, '2024-06-15', TRUE);
+(10.00, TRUE);
 
 INSERT INTO "Ticket" ("Price", "PaymentId", "UserId", "ProjectionId", "IsActive")
 VALUES 

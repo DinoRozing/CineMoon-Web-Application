@@ -97,7 +97,6 @@ CREATE TABLE "Projection" (
 CREATE TABLE "Payment" (
     "Id" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     "TotalPrice" DECIMAL(10, 2) NOT NULL,
-    "PaymentDate" DATE NOT NULL,
     "IsActive" BOOLEAN NOT NULL,
     "DateCreated" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "DateUpdated" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
