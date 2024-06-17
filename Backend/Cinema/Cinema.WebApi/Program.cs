@@ -120,7 +120,16 @@ builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
         .RegisterType<ReviewRepository>()
         .As<IReviewRepository>()
         .InstancePerLifetimeScope();
-    
+
+    containerBuilder
+        .RegisterType<PaymentService>()
+        .As<IPaymentService>()
+        .InstancePerLifetimeScope();
+    containerBuilder
+        .RegisterType<PaymentRepository>()
+        .As<IPaymentRepository>()
+        .InstancePerLifetimeScope();
+
     containerBuilder.RegisterInstance(connectionString).As<string>();
 });
 

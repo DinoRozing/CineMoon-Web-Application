@@ -12,19 +12,31 @@ namespace Cinema.WebApi.Controllers
     public class TicketController : Controller
     {
         private readonly ITicketService _ticketService;
+        private readonly IPaymentService _paymentService;
         private readonly IMapper _mapper;
-        public TicketController(ITicketService ticketService, IMapper mapper)
+
+        public TicketController(ITicketService ticketService, IPaymentService paymentService, IMapper mapper)
         {
-            this._ticketService = ticketService;
+            _ticketService = ticketService;
+            _paymentService = paymentService;
             _mapper = mapper;
         }
-        
+
         [HttpPost]
         public async Task<IActionResult> CreateTicketAsync([FromBody] TicketRest ticketRest)
         {
             try
             {
                 var ticket = _mapper.Map<Ticket>(ticketRest);
+                decimal totalPrice = ticketRest.Price;  
+
+                var payment = await _paymentService.CreatePaymentAsync(totalPrice, ticketRest.UserId);
+
+                ticket.PaymentId = payment.Id;
+
+                ticket.Id = Guid.NewGuid();
+                ticket.DateCreated = DateTime.UtcNow;
+                ticket.DateUpdated = DateTime.UtcNow;
                 var createdTicket = await _ticketService.CreateTicketAsync(ticket);
                 var createdTicketRest = _mapper.Map<TicketRest>(createdTicket);
                 return Ok(createdTicketRest);
