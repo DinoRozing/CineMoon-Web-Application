@@ -1,9 +1,13 @@
 ﻿using Cinema.Model;
 using Cinema.Repository.Common;
 using Cinema.Service.Common;
+<<<<<<< .merge_file_eHgPpQ
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+=======
+using DTO.MovieModel;
+>>>>>>> .merge_file_0cjkog
 
 namespace Cinema.Service
 {
