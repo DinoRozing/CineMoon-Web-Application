@@ -42,14 +42,37 @@ namespace Cinema.WebApi.Controllers
             {
                 return StatusCode(500, ex.Message);
             }
-
         }
-
+        
+        [HttpPost("{movieId}/actor/{actorId}")]
+        public async Task<IActionResult> AddActorToMovie(Guid movieId, Guid actorId)
+        {
+            try
+            {
+                await _movieService.AddActorToMovieAsync(movieId, actorId);
+                
+                return Ok();
+            
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+        
         [HttpGet]
         public async Task<IActionResult> GetAllMoviesAsync()
         {
-            var movies = await _movieService.GetAllMoviesAsync();
-            return Ok(movies);
+            try
+            {
+                var movies = await _movieService.GetAllMoviesAsync();
+                return Ok(movies);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+            
         }
 
         [HttpGet("{id}")]
@@ -65,15 +88,15 @@ namespace Cinema.WebApi.Controllers
 
         [HttpGet]
         [Route ("ByFilter")]
-        public async Task<IActionResult> GetFilteredMoviesAsync(Guid? movieId, string? genre, string? language, string sortBy = "Duration", string sortOrder = "DESC", int pageNumber = 1, int pageSize = 4)
+        public async Task<IActionResult> GetFilteredMoviesAsync(Guid? movieId, Guid? genreId, Guid? languageId, string sortBy = "Duration", string sortOrder = "DESC", int pageNumber = 1, int pageSize = 4)
         {
             try
             {
                 var filtering = new MovieFiltering
                 {
                     MovieId = movieId,
-                    Genre = genre,
-                    Language = language
+                    GenreId = genreId,
+                    LanguageId = languageId
                 };
                 
                 var sorting = new MovieSorting
@@ -101,11 +124,19 @@ namespace Cinema.WebApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateMovieAsync(Guid id, [FromBody] MoviePut moviePut)
         {
+            try
+            {
+                var movie = _mapper.Map<Movie>(moviePut);
+                await _movieService.UpdateMovieAsync(movie);
 
-            var movie = _mapper.Map<Movie>(moviePut);
-            await _movieService.UpdateMovieAsync(movie);
-
-            return Ok();
+                return Ok();
+                
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+            
         }
 
         [HttpDelete("{id}")]
@@ -116,16 +147,26 @@ namespace Cinema.WebApi.Controllers
                 await _movieService.DeleteMovieAsync(id);
                 return Ok();
             }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ex.Message);
-            }
             catch (Exception ex)
             {
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
-
-           
+        }
+        
+        [HttpDelete("{movieId}/actor/{actorId}")]
+        public async Task<IActionResult> DeleteActorFromMovie(Guid movieId, Guid actorId)
+        {
+            try
+            {
+                await _movieService.DeleteActorFromMovie(movieId, actorId);
+                
+                return Ok();
+            
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
 

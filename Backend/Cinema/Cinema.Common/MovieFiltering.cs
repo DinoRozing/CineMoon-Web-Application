@@ -3,7 +3,7 @@
 public class MovieFiltering
 {
     public Guid? MovieId { get; set; }
-    public string? Genre { get; set; }
-    public string? Language { get; set; }
+    public Guid? GenreId { get; set; }
+    public Guid? LanguageId { get; set; }
 
 }

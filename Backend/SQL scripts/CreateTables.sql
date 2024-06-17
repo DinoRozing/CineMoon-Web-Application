@@ -1,5 +1,3 @@
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-
 CREATE TABLE "Role" (
     "Id" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     "RoleName" VARCHAR(255) NOT NULL
@@ -18,21 +16,34 @@ CREATE TABLE "User" (
     CONSTRAINT "FK_User_Role_RoleId" FOREIGN KEY ("RoleId") REFERENCES "Role" ("Id")
 );
 
+CREATE TABLE "Genre" (
+    "Id" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    "Name" VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE "Language" (
+    "Id" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    "Name" VARCHAR(255) NOT NULL
+);
+
 CREATE TABLE "Movie" (
     "Id" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     "Title" VARCHAR(255) NOT NULL,
     "Description" VARCHAR(255) NOT NULL,
     "Duration" INT NOT NULL,
-    "Language" VARCHAR(255) NOT NULL,
+    "LanguageId" UUID,
     "CoverUrl" VARCHAR(255),
     "TrailerUrl" VARCHAR(255),
     "AdminId" UUID,
+    "GenreId" UUID,
     "IsActive" BOOLEAN NOT NULL,
     "DateCreated" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "DateUpdated" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "CreatedByUserId" UUID,
     "UpdatedByUserId" UUID,
-    CONSTRAINT "FK_Movie_Admin_AdminId" FOREIGN KEY ("AdminId") REFERENCES "User" ("Id")
+    CONSTRAINT "FK_Movie_User_AdminId" FOREIGN KEY ("AdminId") REFERENCES "User" ("Id"),
+    CONSTRAINT "FK_Movie_Language_LanguageId" FOREIGN KEY ("LanguageId") REFERENCES "Language" ("Id"),
+    CONSTRAINT "FK_Movie_Genre_GenreId" FOREIGN KEY ("GenreId") REFERENCES "Genre" ("Id")
 );
 
 CREATE TABLE "Review" (
@@ -144,15 +155,4 @@ CREATE TABLE "SeatReserved" (
     CONSTRAINT "FK_SeatReserved_Ticket_TicketId" FOREIGN KEY ("TicketId") REFERENCES "Ticket" ("Id"),
     CONSTRAINT "FK_SeatReserved_Projection_ProjectionId" FOREIGN KEY ("ProjectionId") REFERENCES "Projection" ("Id"),
     CONSTRAINT "FK_SeatReserved_Seat_SeatId" FOREIGN KEY ("SeatId") REFERENCES "Seat" ("Id")
-);
-
-CREATE TABLE "Genre" (
-    "Id" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    "Name" VARCHAR(255) NOT NULL
-);
-
-CREATE TABLE "MovieGenre" (
-    "Id" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    "MovieId" UUID,
-    "GenreId" UUID
 );
