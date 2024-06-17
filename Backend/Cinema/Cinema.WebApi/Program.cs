@@ -19,7 +19,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 string connectionString = builder.Configuration.GetSection("AppSettings").GetValue<String>("ConnectionString");
 
-builder.Services.AddAutoMapper(typeof(UserProfile), typeof(ReviewProfile), typeof(MovieProfile), typeof(TicketProfile));
+builder.Services.AddAutoMapper(typeof(UserProfile), typeof(ReviewProfile), typeof(MovieProfile), typeof(TicketProfile), typeof(ProjectionProfile));
 
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

@@ -11,7 +11,6 @@ namespace Cinema.Mapper
             CreateMap<Review, GetReviewRest>();
             CreateMap<PostReviewRest, Review>();
             CreateMap<PutReviewRest, Review>();
-            CreateMap<DeleteReviewRest, Review>();
         }
     }
 }
