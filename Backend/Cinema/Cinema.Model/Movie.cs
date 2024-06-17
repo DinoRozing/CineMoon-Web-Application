@@ -10,10 +10,10 @@ namespace Cinema.Model
     {
         public Guid Id { get; set; }
         public string? Title { get; set; }
-        public string? Genre { get; set; }
+        public Guid GenreId { get; set; }
         public string? Description { get; set; }
         public int Duration { get; set; }
-        public string? Language { get; set; }
+        public Guid LanguageId { get; set; }
         public string? CoverUrl { get; set; }
         public string? TrailerUrl { get; set; }
         public bool IsActive { get; set; }
@@ -21,7 +21,6 @@ namespace Cinema.Model
         public DateTime DateUpdated { get; set; }
         public Guid CreatedByUserId { get; set; }
         public Guid UpdatedByUserId { get; set; }
-        
         public List<Guid>? ActorId { get; set; }
 
     }
