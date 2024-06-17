@@ -59,35 +59,8 @@ namespace Cinema.WebApi.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-        
-        [HttpGet]
-        public async Task<IActionResult> GetAllMoviesAsync()
-        {
-            try
-            {
-                var movies = await _movieService.GetAllMoviesAsync();
-                return Ok(movies);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-            
-        }
-
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetMovieByIdAsync(Guid id)
-        {
-            var movie = await _movieService.GetMovieByIdAsync(id);
-            if (movie == null)
-            {
-                return NotFound();
-            }
-            return Ok(movie);
-        }
 
         [HttpGet]
-        [Route ("ByFilter")]
         public async Task<IActionResult> GetFilteredMoviesAsync(Guid? movieId, Guid? genreId, Guid? languageId, string sortBy = "Duration", string sortOrder = "DESC", int pageNumber = 1, int pageSize = 4)
         {
             try

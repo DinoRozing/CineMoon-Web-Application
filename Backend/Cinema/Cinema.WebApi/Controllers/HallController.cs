@@ -39,6 +39,18 @@ namespace Cinema.WebApi.Controllers
             }
             return Ok(hall);
         }
+        
+        [HttpGet("halls")]
+        public async Task<IActionResult> GetAvailableHallsAsync(DateOnly date, TimeOnly time, Guid movieId)
+        {
+
+            var halls = await _hallService.GetAvailableHallsAsync(date, time, movieId);
+            
+
+            return Ok(halls);
+            
+        }
+        
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateHallAsync(Guid id, [FromBody] Hall hall)

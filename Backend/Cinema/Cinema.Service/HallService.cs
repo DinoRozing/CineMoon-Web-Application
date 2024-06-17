@@ -1,16 +1,20 @@
 ﻿using Cinema.Model;
 using Cinema.Service.Common;
 using Cinema.Repository.Common;
+using DTO.HallModel;
+using DTO.MovieModel;
 
 namespace Cinema.Service
 {
     public class HallService : IHallService
     {
         private readonly IHallRepository _hallRepository;
+        private readonly IMovieRepository _movieRepository;
 
-        public HallService(IHallRepository hallRepository)
+        public HallService(IHallRepository hallRepository, IMovieRepository movieRepository)
         {
             this._hallRepository = hallRepository;
+            this._movieRepository = movieRepository;
         }
 
         public async Task AddHallAsync(Hall hall)
@@ -26,6 +30,20 @@ namespace Cinema.Service
         public async Task<Hall> GetHallByIdAsync(Guid id)
         {
             return await _hallRepository.GetHallByIdAsync(id);
+        }
+        
+        public async Task<List<AvailableHallGet>> GetAvailableHallsAsync(DateOnly date, TimeOnly time, Guid movieId)
+        {
+            MovieGet movie = await _movieRepository.GetMovieByIdAsync(movieId);
+            var movieDuration = movie.Duration;
+            var projectionLowerLimit = time.AddMinutes(-30);
+            var projectionUpperLimit = time.AddMinutes(movieDuration + 30);
+            
+            return await _hallRepository.GetAvailableHallsAsync(date, projectionLowerLimit, projectionUpperLimit);
+            
+            
+            
+
         }
 
         public async Task UpdateHallAsync(Hall hall)

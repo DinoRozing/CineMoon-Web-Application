@@ -21,6 +21,8 @@ namespace Cinema.WebApi.Controllers
             _projectionService = projectionService ?? throw new ArgumentNullException(nameof(projectionService));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
+        
+        
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<GetProjectionRest>>> GetAllProjectionsAsync()
