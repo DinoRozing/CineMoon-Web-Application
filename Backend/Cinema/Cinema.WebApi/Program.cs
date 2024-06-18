@@ -125,10 +125,33 @@ builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
         .RegisterType<PaymentService>()
         .As<IPaymentService>()
         .InstancePerLifetimeScope();
+    
     containerBuilder
         .RegisterType<PaymentRepository>()
         .As<IPaymentRepository>()
         .InstancePerLifetimeScope();
+    
+    containerBuilder
+        .RegisterType<GenreService>()
+        .As<IGenreService>()
+        .InstancePerLifetimeScope();
+    
+    containerBuilder
+        .RegisterType<GenreRepository>()
+        .As<IGenreRepository>()
+        .InstancePerLifetimeScope();
+    
+    containerBuilder
+        .RegisterType<LanguageService>()
+        .As<ILanguageService>()
+        .InstancePerLifetimeScope();
+    
+    containerBuilder
+        .RegisterType<LanguageRepository>()
+        .As<ILanguageRepository>()
+        .InstancePerLifetimeScope();
+    
+    
 
     containerBuilder.RegisterInstance(connectionString).As<string>();
 });

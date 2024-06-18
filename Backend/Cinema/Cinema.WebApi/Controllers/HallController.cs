@@ -18,36 +18,65 @@ namespace Cinema.WebApi.Controllers
         [HttpPost]
         public async Task<IActionResult> AddHallAsync([FromBody] Hall hall)
         {
-            await _hallService.AddHallAsync(hall);
-            return Ok();
+            try
+            {
+                await _hallService.AddHallAsync(hall);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllHallsAsync()
         {
-            var halls = await _hallService.GetAllHallsAsync();
-            return Ok(halls);
+            try
+            {
+                var halls = await _hallService.GetAllHallsAsync();
+                return Ok(halls);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+            
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetHallByIdAsync(Guid id)
         {
-            var hall = await _hallService.GetHallByIdAsync(id);
-            if (hall == null)
+            try
             {
-                return NotFound();
+                var hall = await _hallService.GetHallByIdAsync(id);
+                if (hall == null)
+                {
+                    return NotFound();
+                }
+                return Ok(hall);
             }
-            return Ok(hall);
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+            
         }
         
         [HttpGet("halls")]
         public async Task<IActionResult> GetAvailableHallsAsync(DateOnly date, TimeOnly time, Guid movieId)
         {
-
-            var halls = await _hallService.GetAvailableHallsAsync(date, time, movieId);
+            try
+            {
+                var halls = await _hallService.GetAvailableHallsAsync(date, time, movieId);
+                
+                return Ok(halls);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
             
-
-            return Ok(halls);
             
         }
         
