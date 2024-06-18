@@ -8,10 +8,10 @@ namespace Cinema.Mapper
     {
         public ProjectionProfile()
         {
-            CreateMap<Projection, GetProjectionRest>();
-            CreateMap<PutProjectionRest, Projection>();
+            CreateMap<Projection, GetProjectionRest>()
+                .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Movie.Title));
             CreateMap<PostProjectionRest, Projection>();
-            CreateMap<PostProjectionHallRest, ProjectionHall>();
+            CreateMap<PutProjectionRest, Projection>();
         }
     }
 }

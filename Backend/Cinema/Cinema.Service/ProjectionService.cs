@@ -1,9 +1,6 @@
 ﻿using Cinema.Model;
 using Cinema.Repository.Common;
 using Cinema.Service.Common;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Cinema.Service
 {

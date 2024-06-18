@@ -17,7 +17,10 @@ namespace Cinema.Repository
             var projections = new List<Projection>();
 
             await using var connection = new NpgsqlConnection(connectionString);
-            var commandText = "SELECT * FROM \"Projection\";";
+            var commandText = @"
+                SELECT p.*, m.""Title""
+                FROM ""Projection"" p
+                JOIN ""Movie"" m ON p.""MovieId"" = m.""Id"";";
 
             await using var command = new NpgsqlCommand(commandText, connection);
             await connection.OpenAsync();
@@ -36,7 +39,12 @@ namespace Cinema.Repository
                     DateCreated = reader.GetDateTime(reader.GetOrdinal("DateCreated")),
                     DateUpdated = reader.GetDateTime(reader.GetOrdinal("DateUpdated")),
                     CreatedByUserId = reader.GetGuid(reader.GetOrdinal("CreatedByUserId")),
-                    UpdatedByUserId = reader.GetGuid(reader.GetOrdinal("UpdatedByUserId"))
+                    UpdatedByUserId = reader.GetGuid(reader.GetOrdinal("UpdatedByUserId")),
+                    Movie = new Movie
+                    {
+                        Id = reader.GetGuid(reader.GetOrdinal("MovieId")),
+                        Title = reader.IsDBNull(reader.GetOrdinal("Title")) ? null : reader.GetString(reader.GetOrdinal("Title"))
+                    }
                 };
                 projections.Add(projection);
             }
@@ -47,7 +55,11 @@ namespace Cinema.Repository
         public async Task<Projection?> GetProjectionByIdAsync(Guid id)
         {
             await using var connection = new NpgsqlConnection(connectionString);
-            var commandText = "SELECT * FROM \"Projection\" WHERE \"Id\" = @Id;";
+            var commandText = @"
+                SELECT p.*, m.""Title""
+                FROM ""Projection"" p
+                JOIN ""Movie"" m ON p.""MovieId"" = m.""Id""
+                WHERE p.""Id"" = @Id;";
             await using var command = new NpgsqlCommand(commandText, connection);
             command.Parameters.AddWithValue("@Id", id);
 
@@ -66,7 +78,12 @@ namespace Cinema.Repository
                     DateCreated = reader.GetDateTime(reader.GetOrdinal("DateCreated")),
                     DateUpdated = reader.GetDateTime(reader.GetOrdinal("DateUpdated")),
                     CreatedByUserId = reader.GetGuid(reader.GetOrdinal("CreatedByUserId")),
-                    UpdatedByUserId = reader.GetGuid(reader.GetOrdinal("UpdatedByUserId"))
+                    UpdatedByUserId = reader.GetGuid(reader.GetOrdinal("UpdatedByUserId")),
+                    Movie = new Movie
+                    {
+                        Id = reader.GetGuid(reader.GetOrdinal("MovieId")),
+                        Title = reader.IsDBNull(reader.GetOrdinal("Title")) ? null : reader.GetString(reader.GetOrdinal("Title"))
+                    }
                 };
 
                 return projection;
