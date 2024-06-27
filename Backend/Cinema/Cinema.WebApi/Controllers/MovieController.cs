@@ -69,7 +69,8 @@ namespace Cinema.WebApi.Controllers
                 {
                     MovieId = movieId,
                     GenreId = genreId,
-                    LanguageId = languageId
+                    LanguageId = languageId,
+                    //SearchTerm = searchTerm
                 };
                 
                 var sorting = new MovieSorting
