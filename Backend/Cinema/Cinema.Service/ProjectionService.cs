@@ -24,6 +24,11 @@ namespace Cinema.Service
         {
             return await _projectionRepository.GetProjectionByIdAsync(id);
         }
+        
+        public async Task<Projection> GetProjectionByMovieIdAsync(Guid id)
+        {
+            return await _projectionRepository.GetProjectionByMovieIdAsync(id);
+        }
 
         public async Task AddProjectionAsync(Projection projection)
         {

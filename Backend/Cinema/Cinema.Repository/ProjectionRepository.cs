@@ -91,6 +91,46 @@ namespace Cinema.Repository
 
             return null;
         }
+        
+        public async Task<Projection?> GetProjectionByMovieIdAsync(Guid id)
+        {
+            await using var connection = new NpgsqlConnection(connectionString);
+            var commandText = @"
+                SELECT p.*, m.""Title""
+                FROM ""Projection"" p
+                JOIN ""Movie"" m ON p.""MovieId"" = m.""Id""
+                WHERE p.""MovieId"" = @Id;";
+            await using var command = new NpgsqlCommand(commandText, connection);
+            command.Parameters.AddWithValue("@Id", id);
+
+            await connection.OpenAsync();
+            await using var reader = await command.ExecuteReaderAsync();
+            if (await reader.ReadAsync())
+            {
+                var projection = new Projection
+                {
+                    Id = reader.GetGuid(reader.GetOrdinal("Id")),
+                    Date = reader.GetDateTime(reader.GetOrdinal("Date")).Date,
+                    Time = reader.GetTimeSpan(reader.GetOrdinal("Time")),
+                    MovieId = reader.GetGuid(reader.GetOrdinal("MovieId")),
+                    UserId = reader.GetGuid(reader.GetOrdinal("UserId")),
+                    IsActive = reader.GetBoolean(reader.GetOrdinal("IsActive")),
+                    DateCreated = reader.GetDateTime(reader.GetOrdinal("DateCreated")),
+                    DateUpdated = reader.GetDateTime(reader.GetOrdinal("DateUpdated")),
+                    CreatedByUserId = reader.GetGuid(reader.GetOrdinal("CreatedByUserId")),
+                    UpdatedByUserId = reader.GetGuid(reader.GetOrdinal("UpdatedByUserId")),
+                    Movie = new Movie
+                    {
+                        Id = reader.GetGuid(reader.GetOrdinal("MovieId")),
+                        Title = reader.IsDBNull(reader.GetOrdinal("Title")) ? null : reader.GetString(reader.GetOrdinal("Title"))
+                    }
+                };
+
+                return projection;
+            }
+
+            return null;
+        }
 
         public async Task AddProjectionAsync(Projection projection)
         {
