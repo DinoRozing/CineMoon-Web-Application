@@ -1,13 +1,5 @@
 import http from "../http.common";
 
-const getAllGenres = () => {
-  return http.get("/genre");
-};
-
-const getAllLanguages = () => {
-  return http.get("/language");
-};
-
 const getFilteredMovies = (filters) => {
   const {
     genreId,
@@ -39,8 +31,6 @@ const getMovieById = (id) => {
 };
 
 const MovieService = {
-  getAllGenres,
-  getAllLanguages,
   getFilteredMovies,
   getMovieById,
 };

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import MovieService from "../services/MovieService";
 import "../App.css";
+
 const Movie = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -9,7 +10,6 @@ const Movie = () => {
   const [movie, setMovie] = useState(null);
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState(0);
-  console.log(rating);
 
   useEffect(() => {
     const fetchMovie = async () => {
@@ -48,7 +48,7 @@ const Movie = () => {
                   <strong>Duration:</strong> {movie[0].duration} min
                 </p>
                 <p className="card-text">
-                  <strong>Actors:</strong> {movie[0].actorNames}
+                  <strong>Actors:</strong> {movie[0].actorNames.join(", ")}
                 </p>
               </div>
             </div>

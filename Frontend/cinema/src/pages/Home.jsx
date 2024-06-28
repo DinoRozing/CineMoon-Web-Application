@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import MovieService from "../services/MovieService";
+import GenreService from "../services/GenreService";
+import LanguageService from "../services/LanguageService";
 
 function Home() {
   const [movies, setMovies] = useState([]);
@@ -21,10 +23,10 @@ function Home() {
   useEffect(() => {
     const fetchGenresAndLanguages = async () => {
       try {
-        const genreResponse = await MovieService.getAllGenres();
+        const genreResponse = await GenreService.getAllGenres();
         setGenres(genreResponse.data);
 
-        const languageResponse = await MovieService.getAllLanguages();
+        const languageResponse = await LanguageService.getAllLanguages();
         setLanguages(languageResponse.data);
       } catch (error) {
         console.error("Error fetching genres and languages:", error);
