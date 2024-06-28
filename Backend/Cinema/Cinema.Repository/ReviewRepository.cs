@@ -89,6 +89,49 @@ namespace Cinema.Repository
             }
             return review;
         }
+        
+        public async Task<IEnumerable<Review>> GetReviewsByMovieIdAsync(Guid id)
+        {
+            var reviews = new List<Review>();
+            using (var conn = new NpgsqlConnection(_connectionString))
+            {
+                await conn.OpenAsync();
+                var commandText = @"
+            SELECT r.*, u.""FirstName""
+            FROM ""Review"" r
+            JOIN ""User"" u ON r.""UserId"" = u.""Id""
+            WHERE r.""MovieId"" = @MovieId;";
+
+                using (var command = new NpgsqlCommand(commandText, conn))
+                {
+                    command.Parameters.AddWithValue("@MovieId", id); // Dodajemo parametar za MovieId
+
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            var review = new Review
+                            {
+                                Id = reader.GetGuid(reader.GetOrdinal("Id")),
+                                Description = reader.GetString(reader.GetOrdinal("Description")),
+                                Rating = reader.GetInt32(reader.GetOrdinal("Rating")),
+                                UserId = reader.GetGuid(reader.GetOrdinal("UserId")),
+                                MovieId = reader.GetGuid(reader.GetOrdinal("MovieId")),
+                                IsActive = reader.GetBoolean(reader.GetOrdinal("IsActive")),
+                                DateCreated = reader.GetDateTime(reader.GetOrdinal("DateCreated")),
+                                DateUpdated = reader.GetDateTime(reader.GetOrdinal("DateUpdated")),
+                                CreatedByUserId = reader.GetGuid(reader.GetOrdinal("CreatedByUserId")),
+                                UpdatedByUserId = reader.GetGuid(reader.GetOrdinal("UpdatedByUserId")),
+                                FirstName = reader.GetString(reader.GetOrdinal("FirstName"))
+                            };
+                            reviews.Add(review);
+                        }
+                    }
+                }
+            }
+            return reviews;
+        }
+
 
         public async Task AddReviewAsync(Review review)
         {
