@@ -40,10 +40,6 @@ namespace Cinema.Service
             var projectionUpperLimit = time.AddMinutes(movieDuration + 30);
             
             return await _hallRepository.GetAvailableHallsAsync(date, projectionLowerLimit, projectionUpperLimit);
-            
-            
-            
-
         }
 
         public async Task UpdateHallAsync(Hall hall)
