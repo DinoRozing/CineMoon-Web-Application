@@ -80,23 +80,20 @@ namespace Cinema.Repository
             await connection.OpenAsync();
 
             var commandText = @"
-                SELECT h.*
-                FROM ""Hall"" h
-                WHERE NOT EXISTS (
-                    SELECT 1
-                    FROM ""ProjectionHall"" ph
-                    INNER JOIN ""Projection"" p ON ph.""ProjectionId"" = p.""Id""
-                    WHERE ph.""HallId"" = h.""Id""
-                    AND (
-                        p.""Date"" = @Date
-                        AND (
-                            p.""Time"" >= @StartTime
-                            AND p.""Time"" <= @EndTime
-                        )
-                    )
-                );
-            ";
-
+        SELECT h.*
+        FROM ""Hall"" h
+        WHERE NOT EXISTS (
+            SELECT 1
+            FROM ""ProjectionHall"" ph
+            INNER JOIN ""Projection"" p ON ph.""ProjectionId"" = p.""Id""
+            WHERE ph.""HallId"" = h.""Id""
+            AND p.""Date"" = @Date
+            AND (
+                p.""Time"" >= @StartTime
+                AND p.""Time"" <= @EndTime
+            )
+        );
+    ";
             await using var command = new NpgsqlCommand(commandText, connection);
             command.Parameters.AddWithValue("@Date", date);
             command.Parameters.AddWithValue("@StartTime", startTime);

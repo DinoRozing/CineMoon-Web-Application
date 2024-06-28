@@ -38,6 +38,19 @@ namespace Cinema.WebApi.Controllers
             var reviewRest = _mapper.Map<GetReviewRest>(review);
             return Ok(reviewRest);
         }
+        
+        [HttpGet("movie/{id}")]
+        public async Task<ActionResult<GetReviewRest>> GetReviewsByMovieIdAsync(Guid id)
+        {
+            var reviews = await _reviewService.GetReviewsByMovieIdAsync(id);
+            if (reviews == null)
+            {
+                return NotFound();
+            }
+            var reviewRests = _mapper.Map<IEnumerable<GetReviewRest>>(reviews);
+           
+            return Ok(reviewRests);
+        }
 
         [HttpPost]
         public async Task<ActionResult<GetReviewRest>> AddReviewAsync([FromBody] PostReviewRest postReviewRest)
