@@ -120,7 +120,7 @@ function Home() {
           </div>
         ) : (
           movies.map((movie) => (
-            <div className="col-md-4 mb-4" key={movie.id}>
+            <div className="col-md-4 mb-4" key={movie.movieId}>
               <div className="card">
                 <img
                   src={movie.coverUrl}
