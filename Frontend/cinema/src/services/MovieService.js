@@ -30,9 +30,14 @@ const getMovieById = (id) => {
   return http.get(`/movie?movieId=${id}`);
 };
 
+const addMovie = (movieData) => {
+  return http.post(`/movie`, movieData);
+};
+
 const MovieService = {
   getFilteredMovies,
   getMovieById,
+  addMovie,
 };
 
 export default MovieService;

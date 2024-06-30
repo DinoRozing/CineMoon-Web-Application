@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import Navbar from './components/Navbar';
 import Movie from './pages/Movie';
 import Projection from './pages/Projection'; 
+import AddMovie from "./pages/AddMovie";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route exact path="/" element={<Home />} />
         <Route exact path="/movie/:id" element={<Movie />} />
         <Route exact path="/addProjection" element={<Projection />} /> 
+        <Route exact path="add-movie" element={<AddMovie />} /> {/* Add route */}
       </Routes>
     </Router>
   );

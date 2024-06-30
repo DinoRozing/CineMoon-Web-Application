@@ -9,8 +9,7 @@ public class MovieProfile: Profile
     public MovieProfile()
     {
         CreateMap<MoviePost, Movie>()
-            .ForMember(dest => dest.CreatedByUserId, opt => opt.MapFrom(src => src.UserId))
-            .ForMember(dest => dest.UpdatedByUserId, opt => opt.MapFrom(src => src.UserId));
+                .ForMember(dest => dest.ActorId, opt => opt.MapFrom(src => src.ActorIds));
         CreateMap<Movie, MovieGet>();
         CreateMap<MoviePut, Movie>()
             .ForMember(dest => dest.UpdatedByUserId, opt => opt.MapFrom(src => src.UserId));
