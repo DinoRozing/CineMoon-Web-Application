@@ -37,10 +37,10 @@ namespace Cinema.Repository
             var actors = new List<Actor>();
 
             await using var connection = new NpgsqlConnection(_connectionString);
+            await connection.OpenAsync();
             var commandText = "SELECT * FROM \"Actor\";";
 
             await using var command = new NpgsqlCommand(commandText, connection);
-            await connection.OpenAsync();
             await using var reader = await command.ExecuteReaderAsync();
 
             while (await reader.ReadAsync())
