@@ -14,6 +14,11 @@ namespace Cinema.Service.Common
 
         public async Task AddActorAsync(Actor actor)
         {
+            actor.Id = Guid.NewGuid();
+            actor.DateCreated = DateTime.UtcNow;
+            actor.DateUpdated = DateTime.UtcNow;
+            actor.IsActive = true;
+
             await _actorRepository.AddActorAsync(actor);
         }
 
@@ -29,6 +34,7 @@ namespace Cinema.Service.Common
 
         public async Task UpdateActorAsync(Actor actor)
         {
+            actor.DateUpdated = DateTime.UtcNow;
             await _actorRepository.UpdateActorAsync(actor);
         }
 

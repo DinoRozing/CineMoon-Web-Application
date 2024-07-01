@@ -39,6 +39,9 @@ const Navbar = () => {
               <Link className="dropdown-item" to="/addProjection"> 
                 Add Projection
               </Link>
+              <Link className="dropdown-item" to="/add-movie">
+                Add Movie
+              </Link>
               <Link className="dropdown-item" to="/another-action">
                 Another action
               </Link>

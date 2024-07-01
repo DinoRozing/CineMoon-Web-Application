@@ -7,6 +7,7 @@ import Projection from "./pages/Projection";
 import ProjectionSelection from "./pages/ProjectionSelection";
 import SeatSelection from "./pages/SeatSelection";
 import AdminDashboard from "./pages/AdminDashboard";
+import AddMovie from "./pages/AddMovie";
 
 function App() {
   return (
@@ -15,13 +16,14 @@ function App() {
       <Routes>
         <Route exact path="/" element={<Home />} />
         <Route exact path="/movie/:id" element={<Movie />} />
-        <Route exact path="/addProjection" element={<Projection />} />
         <Route
           path="/select-projection/:movieId"
           element={<ProjectionSelection />}
         />
         <Route path="/select-seat/:projectionId" element={<SeatSelection />} />
         <Route path="/admin" element={<AdminDashboard />} />
+        <Route exact path="/addProjection" element={<Projection />} />
+        <Route exact path="add-movie" element={<AddMovie />} />
       </Routes>
     </Router>
   );
