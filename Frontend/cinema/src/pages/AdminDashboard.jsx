@@ -47,6 +47,20 @@ const AdminDashboard = () => {
             </div>
           </div>
         </div>
+        <div className="col-md-6">
+          <div className="card mb-3">
+            <div className="card-body">
+              <h5 className="card-title">Manage Actors</h5>
+              <p className="card-text">Add and delete movie actors.</p>
+              <Link to="/admin/add-actors" className="btn btn-primary">
+                Add Actors
+              </Link>
+              <Link to="/admin/delete-actors" className="btn btn-danger ms-2">
+                Delete Actors
+              </Link>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
