@@ -92,20 +92,22 @@ namespace Cinema.Repository
             return null;
         }
         
-        public async Task<Projection?> GetProjectionByMovieIdAsync(Guid id)
+        public async Task<IEnumerable<Projection>> GetProjectionsByMovieIdAsync(Guid id)
         {
             await using var connection = new NpgsqlConnection(connectionString);
             var commandText = @"
-                SELECT p.*, m.""Title""
-                FROM ""Projection"" p
-                JOIN ""Movie"" m ON p.""MovieId"" = m.""Id""
-                WHERE p.""MovieId"" = @Id;";
+        SELECT p.*, m.""Title""
+        FROM ""Projection"" p
+        JOIN ""Movie"" m ON p.""MovieId"" = m.""Id""
+        WHERE p.""MovieId"" = @Id;";
             await using var command = new NpgsqlCommand(commandText, connection);
             command.Parameters.AddWithValue("@Id", id);
 
             await connection.OpenAsync();
             await using var reader = await command.ExecuteReaderAsync();
-            if (await reader.ReadAsync())
+            var projections = new List<Projection>();
+
+            while (await reader.ReadAsync())
             {
                 var projection = new Projection
                 {
@@ -126,10 +128,10 @@ namespace Cinema.Repository
                     }
                 };
 
-                return projection;
+                projections.Add(projection);
             }
 
-            return null;
+            return projections;
         }
 
         public async Task AddProjectionAsync(Projection projection)

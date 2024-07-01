@@ -41,17 +41,18 @@ namespace Cinema.WebApi.Controllers
         }
         
         [HttpGet("movie/{id}")]
-        public async Task<ActionResult<GetProjectionRest>> GetProjectionByMovieIdAsync(Guid id)
+        public async Task<ActionResult<IEnumerable<GetProjectionRest>>> GetProjectionsByMovieIdAsync(Guid id)
         {
-            var projection = await _projectionService.GetProjectionByMovieIdAsync(id);
-            if (projection == null)
+            var projections = await _projectionService.GetProjectionsByMovieIdAsync(id);
+            if (projections == null || !projections.Any())
             {
                 return NotFound();
             }
 
-            var projectionRest = _mapper.Map<GetProjectionRest>(projection);
+            var projectionRest = _mapper.Map<IEnumerable<GetProjectionRest>>(projections);
             return Ok(projectionRest);
         }
+
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateProjectionAsync(Guid id, [FromBody] PutProjectionRest putProjectionRest)
