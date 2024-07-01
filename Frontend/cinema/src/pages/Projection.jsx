@@ -7,8 +7,8 @@ import "../App.css";
 const AddProjection = () => {
   const [projection, setProjection] = useState({
     date: '',
-    time: '', // Ensure time is stored in HH:mm:ss format
-    movieId: '', 
+    time: '',
+    movieId: '',
     hall: ''
   });
 
@@ -31,7 +31,7 @@ const AddProjection = () => {
   useEffect(() => {
     const fetchFilteredMovies = async () => {
       try {
-        const response = await MovieService.getFilteredMovies(filters); 
+        const response = await MovieService.getFilteredMovies(filters);
         setMovies(response.data);
         setLoading(false);
       } catch (error) {
@@ -46,15 +46,11 @@ const AddProjection = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name === 'time') {
-      const formattedTime = value + ':00';
-      setProjection({ ...projection, [name]: formattedTime });
-    } else {
-      setProjection({ ...projection, [name]: value });
-    }
+    setProjection((prev) => ({
+      ...prev,
+      [name]: name === 'time' ? value + ':00' : value
+    }));
   };
-
-  console.log(projection.time)
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -72,6 +68,7 @@ const AddProjection = () => {
       if (projection.date && projection.time && projection.movieId) {
         setLoadingHalls(true);
         try {
+          debugger;
           const response = await HallService.getAvailableHalls(projection.date, projection.time, projection.movieId);
           setAvailableHalls(response.data);
           setLoadingHalls(false);
@@ -82,10 +79,10 @@ const AddProjection = () => {
         }
       }
     };
-
+  
     fetchAvailableHalls();
   }, [projection.date, projection.time, projection.movieId]);
-
+  
   return (
     <>
       <div className="container mt-4">
@@ -110,7 +107,7 @@ const AddProjection = () => {
               className="form-control"
               id="time"
               name="time"
-              value={projection.time.slice(0, 8)} 
+              value={projection.time.slice(0, 5)}
               onChange={handleChange}
               required
             />
@@ -156,6 +153,7 @@ const AddProjection = () => {
             Add projection
           </button>
         </form>
+        {errorHalls && <div className="alert alert-danger mt-3">{errorHalls}</div>}
       </div>
     </>
   );
