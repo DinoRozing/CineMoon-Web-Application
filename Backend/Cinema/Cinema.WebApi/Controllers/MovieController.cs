@@ -58,7 +58,7 @@ namespace Cinema.WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetFilteredMoviesAsync(Guid? movieId, Guid? genreId, Guid? languageId, string sortBy = "Duration", string sortOrder = "DESC", int pageNumber = 1, int pageSize = 4)
+        public async Task<IActionResult> GetFilteredMoviesAsync(Guid? movieId, Guid? genreId, Guid? languageId, string? searchTerm, string sortBy = "Duration", string sortOrder = "DESC", int pageNumber = 1, int pageSize = 0)
         {
             try
             {
@@ -67,7 +67,7 @@ namespace Cinema.WebApi.Controllers
                     MovieId = movieId,
                     GenreId = genreId,
                     LanguageId = languageId,
-                    //SearchTerm = searchTerm
+                    SearchTerm = searchTerm
                 };
 
                 var sorting = new MovieSorting

@@ -25,6 +25,16 @@ namespace Cinema.Service
         {
             return await _seatRepository.GetSeatByIdAsync(id);
         }
+        
+        public async Task<List<Seat>> GetSeatsByProjectionIdAsync(Guid projectionId)
+        {
+            return await _seatRepository.GetSeatsByProjectionIdAsync(projectionId);
+        }
+
+        public async Task<List<SeatReserved>> GetReservedSeatsByProjectionIdAsync(Guid projectionId)
+        {
+            return await _seatRepository.GetReservedSeatsByProjectionIdAsync(projectionId);
+        }
 
         public async Task AddSeatAsync(Seat seat)
         {

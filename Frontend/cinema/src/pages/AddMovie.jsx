@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import AddMovieForm from '../components/AddMovieForm';
-import MovieService from '../services/MovieService';
-import ActorService from '../services/ActorService';
-import GenreService from '../services/GenreService';
-import LanguageService from '../services/LanguageService';
+import React, { useState, useEffect } from "react";
+import AddMovieForm from "../components/AddMovieForm";
+import MovieService from "../services/MovieService";
+import ActorService from "../services/ActorService";
+import GenreService from "../services/GenreService";
+import LanguageService from "../services/LanguageService";
 
 const AddMovie = () => {
   const [actors, setActors] = useState([]);
@@ -18,11 +18,12 @@ const AddMovie = () => {
 
         const genresResponse = await GenreService.getAllGenres();
         setGenres(genresResponse.data);
+        console.log(genres);
 
         const languagesResponse = await LanguageService.getAllLanguages();
         setLanguages(languagesResponse.data);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error("Error fetching data:", error);
       }
     };
 
@@ -30,15 +31,15 @@ const AddMovie = () => {
   }, []);
 
   const handleAddMovie = async (movieData) => {
-    movieData.createdByUserId = '8583110f-f633-45bb-8a3d-8647922b09ed';
-    movieData.updatedByUserId = '8583110f-f633-45bb-8a3d-8647922b09ed';
+    movieData.createdByUserId = "8583110f-f633-45bb-8a3d-8647922b09ed";
+    movieData.updatedByUserId = "8583110f-f633-45bb-8a3d-8647922b09ed";
 
     try {
       await MovieService.addMovie(movieData);
-      alert('Movie added successfully');
+      alert("Movie added successfully");
     } catch (error) {
-      console.error('Error adding movie:', error);
-      alert('Failed to add movie: ' + error.message);
+      console.error("Error adding movie:", error);
+      alert("Failed to add movie: " + error.message);
     }
   };
 
@@ -47,8 +48,8 @@ const AddMovie = () => {
       const actorData = {
         name: actorName,
         isActive: true,
-        createdByUserId: '00000000-0000-0000-0000-000000000000',
-        updatedByUserId: '00000000-0000-0000-0000-000000000000'
+        createdByUserId: "00000000-0000-0000-0000-000000000000",
+        updatedByUserId: "00000000-0000-0000-0000-000000000000",
       };
       const response = await ActorService.addActor(actorData);
       const newActorId = response.data.id;
@@ -58,8 +59,8 @@ const AddMovie = () => {
 
       return newActorId;
     } catch (error) {
-      console.error('Error adding actor:', error);
-      alert('Failed to add actor: ' + error.message);
+      console.error("Error adding actor:", error);
+      alert("Failed to add actor: " + error.message);
       return null;
     }
   };

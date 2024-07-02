@@ -43,6 +43,20 @@ namespace Cinema.WebApi.Controllers
             }
             return Ok(seat);
         }
+        
+        [HttpGet("ByProjection/{projectionId}")]
+        public async Task<IActionResult> GetSeatsByProjectionIdAsync(Guid projectionId)
+        {
+            var seats = await _seatService.GetSeatsByProjectionIdAsync(projectionId);
+            return Ok(seats);
+        }
+
+        [HttpGet("ReservedByProjection/{projectionId}")]
+        public async Task<IActionResult> GetReservedSeatsByProjectionIdAsync(Guid projectionId)
+        {
+            var reservedSeats = await _seatService.GetReservedSeatsByProjectionIdAsync(projectionId);
+            return Ok(reservedSeats);
+        }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateSeatAsync(Guid id, [FromBody] Seat seat)

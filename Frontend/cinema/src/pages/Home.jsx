@@ -6,15 +6,28 @@ import LanguageService from "../services/LanguageService";
 
 function Home() {
   const [movies, setMovies] = useState([]);
+  const [allMovies, setAllMovies] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState({
     genreId: "",
     languageId: "",
     sortBy: "Duration",
     sortOrder: "DESC",
+    searchTerm: "",
     pageNumber: 1,
-    pageSize: 4,
+    pageSize: 2,
   });
+
+  const [filter, setFilter] = useState({
+    genreId: "",
+    languageId: "",
+    sortBy: "Duration",
+    sortOrder: "DESC",
+    searchTerm: "",
+    pageNumber: 1,
+    pageSize: 0,
+  });
+
   const navigate = useNavigate();
 
   const [genres, setGenres] = useState([]);
@@ -40,6 +53,10 @@ function Home() {
     fetchMovies();
   }, [filters]);
 
+  useEffect(() => {
+    fetchAllMovies();
+  }, [filter]);
+
   const fetchMovies = () => {
     MovieService.getFilteredMovies(filters)
       .then((response) => {
@@ -49,11 +66,26 @@ function Home() {
         console.error("Error fetching movies:", error);
       });
   };
+  const fetchAllMovies = () => {
+    MovieService.getFilteredMovies(filter)
+      .then((response) => {
+        setAllMovies(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching all movies:", error);
+      });
+  };
 
   const handleSearchChange = (e) => {
     const value = e.target.value;
     setSearchTerm(value);
     setFilters({
+      ...filters,
+      searchTerm: value,
+      pageNumber: 1,
+    });
+
+    setFilter({
       ...filters,
       searchTerm: value,
     });
@@ -64,11 +96,28 @@ function Home() {
     setFilters({
       ...filters,
       [name]: value,
+      pageNumber: 1,
+    });
+    setFilter({
+      ...filters,
+      [name]: value,
+      pageSize: 0,
     });
   };
 
   const handleMovieClick = (movieId) => {
     navigate(`/movie/${movieId}`);
+  };
+  //console.log(allMovies.length);
+  //console.log(movies.length);
+
+  const totalPages = Math.ceil(allMovies.length / filters.pageSize);
+
+  const handlePageChange = (page) => {
+    setFilters({
+      ...filters,
+      pageNumber: page,
+    });
   };
 
   return (
@@ -143,6 +192,29 @@ function Home() {
             </div>
           ))
         )}
+      </div>
+      <div className="row mt-4">
+        <div className="col">
+          <nav>
+            <ul className="pagination justify-content-center">
+              {Array.from({ length: totalPages }, (_, index) => (
+                <li
+                  className={`page-item ${
+                    index + 1 === filters.pageNumber ? "active" : ""
+                  }`}
+                  key={index}
+                >
+                  <button
+                    className="page-link"
+                    onClick={() => handlePageChange(index + 1)}
+                  >
+                    {index + 1}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
       </div>
     </div>
   );

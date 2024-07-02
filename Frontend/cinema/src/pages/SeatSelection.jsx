@@ -1,22 +1,95 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
 
-const Booking = () => {
-  const [selectedSeat, setSelectedSeat] = useState(null);
+const SeatSelection = () => {
+  const navigate = useNavigate();
 
-  const handleSeatSelect = (seat) => {
-    setSelectedSeat(seat);
-  };
+  const { projectionId } = useParams();
+  const [selectedSeats, setSelectedSeats] = useState([]);
+  const [detailedSelectedSeats, setDetailedSelectedSeats] = useState([]);
+  const [seats, setSeats] = useState([]);
+  const [reservedSeats, setReservedSeats] = useState([]);
+  console.log(selectedSeats);
+  console.log(detailedSelectedSeats);
+  console.log(selectedSeats);
+  useEffect(() => {
+    axios
+      .get(`http://localhost:5058/seat/ByProjection/${projectionId}`)
+      .then((response) => {
+        setSeats(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching seats:", error);
+      });
 
-  const handleConfirm = () => {
-    if (selectedSeat) {
-      alert(`You have selected seat ${selectedSeat}.`);
+    axios
+      .get(`http://localhost:5058/seat/ReservedByProjection/${projectionId}`)
+      .then((response) => {
+        setReservedSeats(
+          response.data.map((seat) => `${seat.rowLetter}${seat.seatNumber}`)
+        );
+      })
+      .catch((error) => {
+        console.error("Error fetching reserved seats:", error);
+      });
+  }, [projectionId]);
+
+  // const handleSeatSelect = (seat) => {
+  //   const isSelected = selectedSeats.includes(seat);
+  //   if (isSelected) {
+  //     setSelectedSeats(selectedSeats.filter((selected) => selected !== seat));
+  //     const selected = seats.find(
+  //       (s) => `${s.rowLetter}${s.seatNumber}` === seat
+  //     );
+  //     console.log(
+  //       `Selected seat: ID ${selected.id}, Row ${selected.rowLetter}, Seat ${selected.seatNumber}`
+  //     );
+  //   } else {
+  //     setSelectedSeats([...selectedSeats, seat]);
+  //   }
+  // };
+  const handleSeatSelect = (seatId) => {
+    const seat = seats.find((s) => `${s.rowLetter}${s.seatNumber}` === seatId);
+
+    // Check if seat is already selected
+    const isSelected = selectedSeats.includes(seatId);
+
+    if (isSelected) {
+      setSelectedSeats(selectedSeats.filter((selected) => selected !== seatId));
+      setDetailedSelectedSeats(
+        detailedSelectedSeats.filter((selected) => selected.id !== seat.id)
+      );
     } else {
-      alert("Please select a seat.");
+      setSelectedSeats([...selectedSeats, seatId]);
+      setDetailedSelectedSeats([
+        ...detailedSelectedSeats,
+        { id: seat.id, rowLetter: seat.rowLetter, seatNumber: seat.seatNumber },
+      ]);
+    }
+  };
+  const handleConfirm = () => {
+    if (selectedSeats.length > 0) {
+      navigate(`/payment/${projectionId}`, {
+        state: { detailedSelectedSeats, projectionId },
+      });
+    } else {
+      alert("Please select at least one seat.");
     }
   };
 
-  const rows = ["A", "B", "C", "D", "E", "F", "G"];
-  const columns = 11;
+  const getMaxColumns = () => {
+    let max = 0;
+    seats.forEach((seat) => {
+      if (seat.seatNumber > max) {
+        max = seat.seatNumber;
+      }
+    });
+    return max;
+  };
+
+  const rows = [...new Set(seats.map((seat) => seat.rowLetter))];
+  const columns = getMaxColumns();
 
   return (
     <div className="container mt-4">
@@ -27,12 +100,12 @@ const Booking = () => {
             <div
               className="screen"
               style={{
-                width: "calc(40px * 11 + 10px * 10)",
+                width: `calc(40px * ${columns} + 10px * ${columns - 1})`,
                 height: "20px",
                 backgroundColor: "#ccc",
                 textAlign: "center",
                 lineHeight: "20px",
-                margin: "0 auto", // Center horizontally
+                margin: "0 auto",
               }}
             >
               Screen
@@ -75,14 +148,19 @@ const Booking = () => {
                   {row}
                 </div>
                 {[...Array(columns).keys()].map((column) => {
-                  const seat = `${row}${column + 1}`;
+                  const seatNumber = column + 1;
+                  const seatId = `${row}${seatNumber}`;
+                  const isReserved = reservedSeats.includes(seatId);
+                  const isSelected = selectedSeats.includes(seatId);
+
                   return (
                     <button
-                      key={seat}
+                      key={seatId}
                       className={`btn ${
-                        selectedSeat === seat ? "btn-success" : "btn-secondary"
+                        isSelected ? "btn-success" : "btn-secondary"
                       }`}
-                      onClick={() => handleSeatSelect(seat)}
+                      onClick={() => handleSeatSelect(seatId)}
+                      disabled={isReserved}
                       style={{
                         width: "40px",
                         height: "40px",
@@ -91,7 +169,7 @@ const Booking = () => {
                         justifyContent: "center",
                       }}
                     >
-                      {column + 1}
+                      {seatNumber}
                     </button>
                   );
                 })}
@@ -99,15 +177,29 @@ const Booking = () => {
             ))}
           </div>
         </div>
-      </div>
-
-      <div className="mt-4 text-center">
-        <button className="btn btn-primary" onClick={handleConfirm}>
-          Confirm Selection
-        </button>
+        {selectedSeats.length > 0 && (
+          <div className="col-md-5">
+            <div className="selected-seats">
+              <h2>Selected Seats</h2>
+              <ul className="list-group">
+                {selectedSeats.map((seat) => (
+                  <li key={seat} className="list-group-item">
+                    Seat: {seat}, Row: {seat.charAt(0)}, Number:{" "}
+                    {seat.substring(1)}
+                  </li>
+                ))}
+              </ul>
+              <div className="text-center mt-4">
+                <button className="btn btn-primary" onClick={handleConfirm}>
+                  Confirm Selection
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
 };
 
-export default Booking;
+export default SeatSelection;

@@ -9,7 +9,8 @@ import SeatSelection from "./pages/SeatSelection";
 import AdminDashboard from "./pages/AdminDashboard";
 import AddMovie from "./pages/AddMovie";
 import AddActor from "./pages/AddActor";
-import DeleteActor from "./pages/DeleteActor"; 
+import DeleteActor from "./pages/DeleteActor";
+import Payment from "./pages/Payment";
 
 function App() {
   return (
@@ -24,10 +25,11 @@ function App() {
         />
         <Route path="/select-seat/:projectionId" element={<SeatSelection />} />
         <Route path="/admin" element={<AdminDashboard />} />
-        <Route exact path="/addProjection" element={<Projection />} />
         <Route exact path="/add-movie" element={<AddMovie />} />
         <Route exact path="/add-actor" element={<AddActor />} />
-        <Route exact path="/delete-actor" element={<DeleteActor />} /> 
+        <Route exact path="/delete-actor" element={<DeleteActor />} />
+        <Route exact path="/add-projection" element={<Projection />} />
+        <Route path="/payment/:projectionId" element={<Payment />} />
       </Routes>
     </Router>
   );

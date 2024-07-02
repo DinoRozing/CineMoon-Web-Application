@@ -172,14 +172,24 @@ namespace Cinema.Repository
             {
                 queryBuilder.Append(" AND m.\"LanguageId\" = @LanguageId");
             }
+            
+            if (!string.IsNullOrEmpty(filtering.SearchTerm))
+            {
+                queryBuilder.Append(" AND m.\"Title\" ILIKE '%' || @SearchTerm || '%'");
+            }
 
             queryBuilder.Append(" GROUP BY m.\"Id\", m.\"Title\", m.\"Description\", m.\"Duration\", m.\"LanguageId\", m.\"CoverUrl\", m.\"TrailerUrl\", g.\"Name\", l.\"Name\"");
-
-
-
+            
             queryBuilder.Append($" ORDER BY \"{sorting.SortBy}\" {sorting.SortOrder}");
 
-            queryBuilder.Append($" OFFSET {paging.PageSize * (paging.PageNumber - 1)} LIMIT {paging.PageSize};");
+            if (paging.PageSize > 0) 
+            {
+                queryBuilder.Append($" OFFSET {paging.PageSize * (paging.PageNumber - 1)} LIMIT {paging.PageSize};");
+            }
+            else
+            {
+                queryBuilder.Append(";"); 
+            }
 
             await using var connection = new NpgsqlConnection(_connectionString);
             var movies = new List<MovieGet>();
@@ -201,7 +211,12 @@ namespace Cinema.Repository
             {
                 command.Parameters.AddWithValue("@LanguageId", filtering.LanguageId);
             }
-
+            
+            if (!string.IsNullOrEmpty(filtering.SearchTerm))
+            {
+                command.Parameters.AddWithValue("@SearchTerm", filtering.SearchTerm);
+            }
+            
             await using var reader = await command.ExecuteReaderAsync();
 
             while (await reader.ReadAsync())

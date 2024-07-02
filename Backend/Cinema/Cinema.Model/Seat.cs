@@ -10,8 +10,9 @@ namespace Cinema.Model
     {
         public Guid Id { get; set; }
         public int SeatNumber { get; set; }
+        public string RowLetter { get; set; }
         public Guid HallId { get; set; }
-        public Hall? Hall { get; set; }
-        public ICollection<SeatReserved>? SeatsReserved { get; set; }
+        public int HallNumber { get; set; } 
     }
 }
+

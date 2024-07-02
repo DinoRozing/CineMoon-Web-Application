@@ -9,6 +9,8 @@ namespace Cinema.Repository.Common
     {
         Task<List<Seat>> GetAllSeatsAsync();
         Task<Seat> GetSeatByIdAsync(Guid id);
+        Task<List<Seat>> GetSeatsByProjectionIdAsync(Guid projectionId);
+        Task<List<SeatReserved>> GetReservedSeatsByProjectionIdAsync(Guid projectionId);
         Task AddSeatAsync(Seat seat);
         Task UpdateSeatAsync(Seat seat);
         Task DeleteSeatAsync(Guid id);

@@ -1,21 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
-const AddMovieForm = ({ actors, genres, languages, onAddMovie, onAddNewActor }) => {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [duration, setDuration] = useState('');
-  const [language, setLanguage] = useState('');
-  const [coverUrl, setCoverUrl] = useState('');
-  const [trailerUrl, setTrailerUrl] = useState('');
-  const [genre, setGenre] = useState('');
-  const [newActor, setNewActor] = useState('');
+const AddMovieForm = ({
+  actors,
+  genres,
+  languages,
+  onAddMovie,
+  onAddNewActor,
+}) => {
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [duration, setDuration] = useState("");
+  const [language, setLanguage] = useState("");
+  const [coverUrl, setCoverUrl] = useState("");
+  const [trailerUrl, setTrailerUrl] = useState("");
+  const [genre, setGenre] = useState("");
+  const [newActor, setNewActor] = useState("");
   const [selectedActors, setSelectedActors] = useState([]);
-
+  console.log(selectedActors);
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    if (!title || !description || !duration || !language || !coverUrl || !trailerUrl || !genre || selectedActors.length === 0) {
-      alert('Please fill out all fields.');
+    if (
+      !title ||
+      !description ||
+      !duration ||
+      !language ||
+      !coverUrl ||
+      !trailerUrl ||
+      !genre ||
+      selectedActors.length === 0
+    ) {
+      alert("Please fill out all fields.");
       return;
     }
 
@@ -30,7 +45,7 @@ const AddMovieForm = ({ actors, genres, languages, onAddMovie, onAddNewActor }) 
       actorIds: selectedActors,
     };
 
-    console.log('Sending movie data:', movieData);
+    console.log("Sending movie data:", movieData);
 
     onAddMovie(movieData);
   };
@@ -40,7 +55,7 @@ const AddMovieForm = ({ actors, genres, languages, onAddMovie, onAddNewActor }) 
       const newActorId = await onAddNewActor(newActor);
       if (newActorId) {
         setSelectedActors([...selectedActors, newActorId]);
-        setNewActor('');
+        setNewActor("");
       }
     }
   };
@@ -144,7 +159,11 @@ const AddMovieForm = ({ actors, genres, languages, onAddMovie, onAddNewActor }) 
             className="form-control"
             id="actors"
             value={selectedActors}
-            onChange={(e) => setSelectedActors([...e.target.selectedOptions].map(option => option.value))}
+            onChange={(e) =>
+              setSelectedActors(
+                [...e.target.selectedOptions].map((option) => option.value)
+              )
+            }
             size="5"
           >
             {actors.map((actor) => (
@@ -172,7 +191,9 @@ const AddMovieForm = ({ actors, genres, languages, onAddMovie, onAddNewActor }) 
             Add Actor
           </button>
         </div>
-        <button type="submit" className="btn btn-primary">Add Movie</button>
+        <button type="submit" className="btn btn-primary">
+          Add Movie
+        </button>
       </form>
     </div>
   );

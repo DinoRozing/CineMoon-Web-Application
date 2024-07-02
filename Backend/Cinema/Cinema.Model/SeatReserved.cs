@@ -17,8 +17,10 @@ namespace Cinema.Model
         public DateTime DateUpdated { get; set; }
         public Guid CreatedByUserId { get; set; }
         public Guid UpdatedByUserId { get; set; }
-        public Ticket? Ticket { get; set; }
-        public Projection? Projection { get; set; }
-        public Seat? Seat { get; set; }
+        public int SeatNumber { get; set; }
+        public string RowLetter { get; set; }
+        public Guid HallId { get; set; }
+        public int HallNumber { get; set; }
     }
 }
+
