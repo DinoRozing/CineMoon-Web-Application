@@ -36,7 +36,7 @@ const Navbar = () => {
               className="dropdown-menu dropdown-menu-right"
               aria-labelledby="navbarDropdown"
             >
-              <Link className="dropdown-item" to="/addProjection"> 
+              <Link className="dropdown-item" to="/add-projection"> 
                 Add Projection
               </Link>
               <Link className="dropdown-item" to="/add-movie">

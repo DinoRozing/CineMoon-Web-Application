@@ -23,13 +23,13 @@ const AdminDashboard = () => {
         <div className="col-md-6">
           <div className="card mb-3">
             <div className="card-body">
-              <h5 className="card-title">Manage Showtimes</h5>
-              <p className="card-text">Add, delete, and manage showtimes.</p>
+              <h5 className="card-title">Manage Projections</h5>
+              <p className="card-text" >Add, delete and manage projections.</p>
               <Link to="/add-projection" className="btn btn-primary">
-                Add Showtime
+                Add Projection
               </Link>
-              <Link to="/delete-projection" className="btn btn-danger ms-2">
-                Delete Showtime
+              <Link to="/manage-projections" className="btn btn-danger ms-2">
+                Manage Projections
               </Link>
             </div>
           </div>

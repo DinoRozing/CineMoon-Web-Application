@@ -3,7 +3,8 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Navbar from "./components/Navbar";
 import Movie from "./pages/Movie";
-import Projection from "./pages/Projection";
+import AddProjection from "./pages/AddProjection";
+import ManageProjections from "./pages/ManageProjections";
 import ProjectionSelection from "./pages/ProjectionSelection";
 import SeatSelection from "./pages/SeatSelection";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -25,6 +26,8 @@ function App() {
         />
         <Route path="/select-seat/:projectionId" element={<SeatSelection />} />
         <Route path="/admin" element={<AdminDashboard />} />
+        <Route exact path="/add-projection" element={<AddProjection />} />
+        <Route exact path="/manage-projections" element={<ManageProjections />} />
         <Route exact path="/add-movie" element={<AddMovie />} />
         <Route exact path="/add-actor" element={<AddActor />} />
         <Route exact path="/delete-actor" element={<DeleteActor />} />
