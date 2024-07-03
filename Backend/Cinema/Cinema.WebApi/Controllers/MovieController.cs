@@ -32,6 +32,8 @@ namespace Cinema.WebApi.Controllers
                 movie.IsActive = true;
                 movie.DateCreated = DateTime.UtcNow;
                 movie.DateUpdated = DateTime.UtcNow;
+                movie.CreatedByUserId = movie.CreatedByUserId;
+                movie.UpdatedByUserId = movie.CreatedByUserId;
 
                 await _movieService.AddMovieAsync(movie);
 
@@ -39,9 +41,10 @@ namespace Cinema.WebApi.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Error adding movie: {ex.Message}");
+                return StatusCode(500, ex.Message);
             }
         }
+
 
         [HttpPost("{movieId}/actor/{actorId}")]
         public async Task<IActionResult> AddActorToMovie(Guid movieId, Guid actorId)
@@ -58,7 +61,7 @@ namespace Cinema.WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetFilteredMoviesAsync(Guid? movieId, Guid? genreId, Guid? languageId, string? searchTerm, string sortBy = "Duration", string sortOrder = "DESC", int pageNumber = 1, int pageSize = 0)
+        public async Task<IActionResult> GetFilteredMoviesAsync(Guid? movieId, Guid? genreId, Guid? languageId, string sortBy = "Duration", string sortOrder = "DESC", int pageNumber = 1, int pageSize = 4)
         {
             try
             {
@@ -67,7 +70,6 @@ namespace Cinema.WebApi.Controllers
                     MovieId = movieId,
                     GenreId = genreId,
                     LanguageId = languageId,
-                    SearchTerm = searchTerm
                 };
 
                 var sorting = new MovieSorting
@@ -92,12 +94,14 @@ namespace Cinema.WebApi.Controllers
             }
         }
 
+
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateMovieAsync(Guid id, [FromBody] MoviePut moviePut)
         {
             try
             {
                 var movie = _mapper.Map<Movie>(moviePut);
+                movie.Id = id;
                 await _movieService.UpdateMovieAsync(movie);
 
                 return Ok();

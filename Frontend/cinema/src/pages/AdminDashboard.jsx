@@ -14,8 +14,8 @@ const AdminDashboard = () => {
               <Link to="/add-movie" className="btn btn-primary">
                 Add Movie
               </Link>
-              <Link to="/delete-movie" className="btn btn-danger ms-2">
-                Delete Movie
+              <Link to="/view-movies" className="btn btn-success ms-2">
+                View Movies
               </Link>
             </div>
           </div>

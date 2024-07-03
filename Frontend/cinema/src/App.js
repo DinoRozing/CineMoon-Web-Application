@@ -12,6 +12,8 @@ import AddMovie from "./pages/AddMovie";
 import AddActor from "./pages/AddActor";
 import DeleteActor from "./pages/DeleteActor";
 import Payment from "./pages/Payment";
+import ViewMovies from "./pages/ViewMovies";
+import UpdateMovie from "./pages/UpdateMovie";
 
 function App() {
   return (
@@ -31,6 +33,8 @@ function App() {
         <Route exact path="/add-movie" element={<AddMovie />} />
         <Route exact path="/add-actor" element={<AddActor />} />
         <Route exact path="/delete-actor" element={<DeleteActor />} />
+        <Route exact path="/view-movies" element={<ViewMovies />} />
+        <Route exact path="/update-movie/:id" element={<UpdateMovie />} />
         <Route path="/payment/:projectionId" element={<Payment />} />
       </Routes>
     </Router>
