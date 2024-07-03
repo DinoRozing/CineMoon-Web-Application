@@ -10,7 +10,7 @@ const AddMovie = () => {
   const [actors, setActors] = useState([]);
   const [genres, setGenres] = useState([]);
   const [languages, setLanguages] = useState([]);
-  const navigate = useNavigate(); // Initialize useNavigate hook
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {

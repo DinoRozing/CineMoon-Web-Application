@@ -11,7 +11,7 @@ const AddProjection = () => {
     time: '',
     movieId: '',
     hall: '',
-    userId: '89044808-643f-480a-99be-8afc1dd7c7d3'
+    userId: '8583110f-f633-45bb-8a3d-8647922b09ed'
   };
 
   const [projection, setProjection] = useState(initialProjectionState);
