@@ -1,20 +1,26 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import AddMovieForm from "../components/AddMovieForm";
 import MovieService from "../services/MovieService";
 import ActorService from "../services/ActorService";
 import GenreService from "../services/GenreService";
 import LanguageService from "../services/LanguageService";
 
-const AddMovie = () => {
+const UpdateMovie = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+
+  const [movieData, setMovieData] = useState(null);
   const [actors, setActors] = useState([]);
   const [genres, setGenres] = useState([]);
   const [languages, setLanguages] = useState([]);
-  const navigate = useNavigate(); // Initialize useNavigate hook
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const movieResponse = await MovieService.getMovieById(id);
+        setMovieData(movieResponse.data[0]);
+
         const actorsResponse = await ActorService.getAllActors();
         setActors(actorsResponse.data);
 
@@ -29,19 +35,16 @@ const AddMovie = () => {
     };
 
     fetchData();
-  }, []);
+  }, [id]);
 
-  const handleAddMovie = async (movieData) => {
-    movieData.createdByUserId = "8583110f-f633-45bb-8a3d-8647922b09ed";
-    movieData.updatedByUserId = "8583110f-f633-45bb-8a3d-8647922b09ed";
-
+  const handleUpdateMovie = async (updatedMovieData) => {
     try {
-      await MovieService.addMovie(movieData);
-      alert("Movie added successfully");
-      navigate("/admin");
+      await MovieService.updateMovie(id, updatedMovieData);
+      alert("Movie updated successfully");
+      navigate("/view-movies");
     } catch (error) {
-      console.error("Error adding movie:", error);
-      alert("Failed to add movie: " + error.message);
+      console.error("Error updating movie:", error);
+      alert("Failed to update movie: " + error.message);
     }
   };
 
@@ -67,17 +70,21 @@ const AddMovie = () => {
     }
   };
 
+  if (!movieData) return <div>Loading...</div>;
+
   return (
     <div>
       <AddMovieForm
+        initialData={movieData}
         actors={actors}
         genres={genres}
         languages={languages}
-        onAddMovie={handleAddMovie}
+        onAddMovie={handleUpdateMovie}
         onAddNewActor={handleAddNewActor}
+        isUpdate={true}
       />
     </div>
   );
 };
 
-export default AddMovie;
+export default UpdateMovie;

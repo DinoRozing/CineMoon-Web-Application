@@ -1,22 +1,30 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const AddMovieForm = ({
+  initialData = {},
   actors,
   genres,
   languages,
   onAddMovie,
   onAddNewActor,
+  isUpdate = false,
 }) => {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [duration, setDuration] = useState("");
-  const [language, setLanguage] = useState("");
-  const [coverUrl, setCoverUrl] = useState("");
-  const [trailerUrl, setTrailerUrl] = useState("");
-  const [genre, setGenre] = useState("");
+  const [title, setTitle] = useState(initialData.title || "");
+  const [description, setDescription] = useState(initialData.description || "");
+  const [duration, setDuration] = useState(initialData.duration || "");
+  const [language, setLanguage] = useState(initialData.languageId || "");
+  const [coverUrl, setCoverUrl] = useState(initialData.coverUrl || "");
+  const [trailerUrl, setTrailerUrl] = useState(initialData.trailerUrl || "");
+  const [genre, setGenre] = useState(initialData.genreId || "");
   const [newActor, setNewActor] = useState("");
-  const [selectedActors, setSelectedActors] = useState([]);
-  console.log(selectedActors);
+  const [selectedActors, setSelectedActors] = useState(initialData.actorIds || []);
+
+  useEffect(() => {
+    if (initialData.actorIds) {
+      setSelectedActors(initialData.actorIds);
+    }
+  }, [initialData.actorIds]);
+
   const handleSubmit = (event) => {
     event.preventDefault();
 
@@ -62,7 +70,7 @@ const AddMovieForm = ({
 
   return (
     <div className="container mt-5">
-      <h2>Add Movie</h2>
+      <h2>{isUpdate ? "Update Movie" : "Add Movie"}</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="title">Title</label>
@@ -154,24 +162,28 @@ const AddMovieForm = ({
         </div>
         <div className="form-group">
           <label htmlFor="actors">Actors</label>
-          <select
-            multiple
-            className="form-control"
-            id="actors"
-            value={selectedActors}
-            onChange={(e) =>
-              setSelectedActors(
-                [...e.target.selectedOptions].map((option) => option.value)
-              )
-            }
-            size="5"
-          >
+          <div className="form-check">
             {actors.map((actor) => (
-              <option key={actor.id} value={actor.id}>
-                {actor.name}
-              </option>
+              <div key={actor.id} className="form-check">
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  value={actor.id}
+                  checked={selectedActors.includes(actor.id)}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setSelectedActors([...selectedActors, actor.id]);
+                    } else {
+                      setSelectedActors(
+                        selectedActors.filter((id) => id !== actor.id)
+                      );
+                    }
+                  }}
+                />
+                <label className="form-check-label">{actor.name}</label>
+              </div>
             ))}
-          </select>
+          </div>
           <small className="form-text text-muted">
             If an actor is not on the list, add them below.
           </small>
@@ -192,7 +204,7 @@ const AddMovieForm = ({
           </button>
         </div>
         <button type="submit" className="btn btn-primary">
-          Add Movie
+          {isUpdate ? "Update Movie" : "Add Movie"}
         </button>
       </form>
     </div>
