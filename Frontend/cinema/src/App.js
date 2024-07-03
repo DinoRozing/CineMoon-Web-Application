@@ -31,7 +31,6 @@ function App() {
         <Route exact path="/add-movie" element={<AddMovie />} />
         <Route exact path="/add-actor" element={<AddActor />} />
         <Route exact path="/delete-actor" element={<DeleteActor />} />
-        <Route exact path="/add-projection" element={<Projection />} />
         <Route path="/payment/:projectionId" element={<Payment />} />
       </Routes>
     </Router>
