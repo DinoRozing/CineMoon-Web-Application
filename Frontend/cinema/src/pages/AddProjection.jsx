@@ -3,15 +3,18 @@ import ProjectionService from '../services/ProjectionService';
 import MovieService from '../services/MovieService';
 import HallService from '../services/HallService';
 import "../App.css";
+import { Link } from 'react-router-dom';
 
 const AddProjection = () => {
-  const [projection, setProjection] = useState({
+  const initialProjectionState = {
     date: '',
-    time: '', // Ensure time is stored in HH:mm:ss format
-    movieId: '', 
-    hall: ''
-  });
+    time: '',
+    movieId: '',
+    hall: '',
+    userId: '89044808-643f-480a-99be-8afc1dd7c7d3'
+  };
 
+  const [projection, setProjection] = useState(initialProjectionState);
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -27,11 +30,12 @@ const AddProjection = () => {
   const [availableHalls, setAvailableHalls] = useState([]);
   const [loadingHalls, setLoadingHalls] = useState(false);
   const [errorHalls, setErrorHalls] = useState(null);
+  const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
     const fetchFilteredMovies = async () => {
       try {
-        const response = await MovieService.getFilteredMovies(filters); 
+        const response = await MovieService.getFilteredMovies(filters);
         setMovies(response.data);
         setLoading(false);
       } catch (error) {
@@ -46,27 +50,31 @@ const AddProjection = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name === 'time') {
-      const formattedTime = value + ':00';
-      setProjection({ ...projection, [name]: formattedTime });
-    } else {
-      setProjection({ ...projection, [name]: value });
+    setProjection((prev) => ({
+      ...prev,
+      [name]: name === 'time' ? value + ':00' : value
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await ProjectionService.addProjection(projection);
+      console.log("Projection added:", response.data);
+      setSuccessMessage('Projection added successfully!');
+      setProjection(initialProjectionState); 
+      setTimeout(() => {
+        setSuccessMessage('');
+      }, 2500); 
+    } catch (error) {
+      console.error("Error adding projection:", error);
+      if (error.response) {
+        console.error("Response data:", error.response.data);
+      }
+      setError("Failed to add projection. Please check the data and try again.");
     }
   };
-
-  console.log(projection.time)
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    ProjectionService.addProjection(projection)
-      .then(response => {
-        console.log("Projection added:", response.data);
-      })
-      .catch(e => {
-        console.error(e);
-      });
-  };
-
+  
   useEffect(() => {
     const fetchAvailableHalls = async () => {
       if (projection.date && projection.time && projection.movieId) {
@@ -82,14 +90,19 @@ const AddProjection = () => {
         }
       }
     };
-
+  
     fetchAvailableHalls();
   }, [projection.date, projection.time, projection.movieId]);
-
+  
   return (
     <>
       <div className="container mt-4">
         <h2 className="text-center mb-4">Add new projection</h2>
+        {successMessage && (
+          <div className="alert alert-success">
+            {successMessage}
+          </div>
+        )}
         <form id="projectionForm" onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="date">Date:</label>
@@ -110,7 +123,7 @@ const AddProjection = () => {
               className="form-control"
               id="time"
               name="time"
-              value={projection.time.slice(0, 8)} 
+              value={projection.time.slice(0, 5)}
               onChange={handleChange}
               required
             />
@@ -127,7 +140,7 @@ const AddProjection = () => {
             >
               <option value="">Select a movie...</option>
               {movies.map((movie) => (
-                <option key={movie.id} value={movie.id}>
+                <option key={movie.movieId} value={movie.movieId}>
                   {movie.title}
                 </option>
               ))}
@@ -135,27 +148,42 @@ const AddProjection = () => {
           </div>
           <div className="form-group">
             <label htmlFor="hall">Hall:</label>
-            <select
-              className="form-control"
-              id="hall"
-              name="hall"
-              value={projection.hall}
-              onChange={handleChange}
-              required
-            >
-              <option value="">Select a hall...</option>
-              {availableHalls.map((hall) => (
-                <option key={hall.id} value={hall.id}>
-                  {hall.name}
-                </option>
-              ))}
-            </select>
+            {(projection.date && projection.time && projection.movieId) ? (
+              loadingHalls ? (
+                <p>Loading halls...</p>
+              ) : availableHalls.length === 0 ? (
+                <p>No available halls for selected date, time, and movie.</p>
+              ) : (
+                <select
+                  className="form-control"
+                  id="hall"
+                  name="hall"
+                  value={projection.hall}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="">Select a hall...</option>
+                  {availableHalls.map((hall) => (
+                    <option key={hall.id} value={hall.id}>
+                      Hall {hall.hallNumber}
+                    </option>
+                  ))}
+                </select>
+              )
+            ) : (
+              <p>Please select date, time, and movie first.</p>
+            )}
           </div>
           
           <button type="submit" className="btn btn-primary">
             Add projection
           </button>
+
+          <Link to="/manage-projections" className="btn btn-secondary ml-2">
+            Manage projections
+          </Link>
         </form>
+        {errorHalls && <div className="alert alert-danger mt-3">{errorHalls}</div>}
       </div>
     </>
   );

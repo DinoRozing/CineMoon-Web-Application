@@ -53,7 +53,6 @@ namespace Cinema.WebApi.Controllers
             return Ok(projectionRest);
         }
 
-
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateProjectionAsync(Guid id, [FromBody] PutProjectionRest putProjectionRest)
         {

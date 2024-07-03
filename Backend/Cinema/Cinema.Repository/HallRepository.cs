@@ -71,7 +71,7 @@ namespace Cinema.Repository
 
             return null;
         }
-        
+
         public async Task<List<AvailableHallGet>> GetAvailableHallsAsync(DateOnly date, TimeOnly startTime, TimeOnly endTime)
         {
             var halls = new List<AvailableHallGet>();
@@ -80,24 +80,29 @@ namespace Cinema.Repository
             await connection.OpenAsync();
 
             var commandText = @"
-        SELECT h.*
-        FROM ""Hall"" h
-        WHERE NOT EXISTS (
-            SELECT 1
-            FROM ""ProjectionHall"" ph
-            INNER JOIN ""Projection"" p ON ph.""ProjectionId"" = p.""Id""
-            WHERE ph.""HallId"" = h.""Id""
-            AND p.""Date"" = @Date
-            AND (
-                p.""Time"" >= @StartTime
-                AND p.""Time"" <= @EndTime
-            )
-        );
-    ";
+                SELECT h.*
+                FROM ""Hall"" h
+                WHERE NOT EXISTS (
+                    SELECT 1
+                    FROM ""ProjectionHall"" ph
+                    INNER JOIN ""Projection"" p ON ph.""ProjectionId"" = p.""Id""
+                    INNER JOIN ""Movie"" m ON p.""MovieId"" = m.""Id""
+                    WHERE ph.""HallId"" = h.""Id""
+                    AND p.""Date"" = @Date
+                    AND (
+                        (p.""Time"" >= @StartTime AND p.""Time"" <= @EndTime)
+                        OR
+                        (p.""Time"" + INTERVAL '1 minute' * m.""Duration"" >= @StartTime AND p.""Time"" + INTERVAL '1 minute' * m.""Duration"" <= @EndTime)
+                        OR
+                        (@StartTime >= p.""Time"" AND @StartTime <= p.""Time"" + INTERVAL '1 minute' * m.""Duration"")
+                    )
+                );
+            ";
+
             await using var command = new NpgsqlCommand(commandText, connection);
-            command.Parameters.AddWithValue("@Date", date);
-            command.Parameters.AddWithValue("@StartTime", startTime);
-            command.Parameters.AddWithValue("@EndTime", endTime);
+            command.Parameters.AddWithValue("@Date", date.ToDateTime(TimeOnly.MinValue));
+            command.Parameters.AddWithValue("@StartTime", startTime.ToTimeSpan());
+            command.Parameters.AddWithValue("@EndTime", endTime.ToTimeSpan());
 
             await using var reader = await command.ExecuteReaderAsync();
 
@@ -114,8 +119,6 @@ namespace Cinema.Repository
 
             return halls;
         }
-    
-
 
         public async Task UpdateHallAsync(Hall hall)
         {

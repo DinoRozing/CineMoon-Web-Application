@@ -96,10 +96,11 @@ namespace Cinema.Repository
         {
             await using var connection = new NpgsqlConnection(connectionString);
             var commandText = @"
-        SELECT p.*, m.""Title""
-        FROM ""Projection"" p
-        JOIN ""Movie"" m ON p.""MovieId"" = m.""Id""
-        WHERE p.""MovieId"" = @Id;";
+                SELECT p.*, m.""Title""
+                FROM ""Projection"" p
+                JOIN ""Movie"" m ON p.""MovieId"" = m.""Id""
+                WHERE p.""MovieId"" = @Id;
+            ";
             await using var command = new NpgsqlCommand(commandText, connection);
             command.Parameters.AddWithValue("@Id", id);
 
