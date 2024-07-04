@@ -1,27 +1,50 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import MovieService from "../services/MovieService";
 import ReviewService from "../services/ReviewService";
 import "../App.css";
 import StarDisplay from "../components/StarDisplay";
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
+import { Context } from "../App";
 
 const Movie = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-
+  const [signedIn, setSignedIn] = useContext(Context);
   const [movie, setMovie] = useState(null);
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState(0);
   const [reviews, setReviews] = useState([]);
+  const [decodedUser, setDecodedUser] = useState({});
   const [newReview, setNewReview] = useState({
     description: "",
     rating: 0,
-    userId: "66fda25a-bc28-41a3-be74-b8c23352d3ad",
+    userId: "",
     movieId: id,
-    CreatedByUserId: "66fda25a-bc28-41a3-be74-b8c23352d3ad",
-    UpdatedByUserId: "66fda25a-bc28-41a3-be74-b8c23352d3ad",
+    CreatedByUserId: "",
+    UpdatedByUserId: "",
   });
+
+  {
+    decodedUser.Role == "Admin" && navigate("/admin");
+  }
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      const decoded = jwtDecode(token);
+      setDecodedUser(decoded);
+
+      setNewReview((prev) => ({
+        ...prev,
+        userId: decoded.UserId,
+        CreatedByUserId: decoded.UserId,
+        UpdatedByUserId: decoded.UserId,
+      }));
+    }
+  }, [signedIn]);
 
   useEffect(() => {
     const fetchMovie = async () => {
@@ -67,17 +90,22 @@ const Movie = () => {
     try {
       const response = await axios.post(
         "http://localhost:5058/review",
-        newReview
+        newReview,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
       );
       const addedReview = response.data;
       setReviews([...reviews, addedReview]);
       setNewReview({
         description: "",
         rating: 0,
-        userId: "66fda25a-bc28-41a3-be74-b8c23352d3ad", // Resetiraj novu recenziju na prazan objekt s defaultnim userID
+        userId: newReview.UserId,
         movieId: id,
-        CreatedByUserId: "66fda25a-bc28-41a3-be74-b8c23352d3ad",
-        UpdatedByUserId: "66fda25a-bc28-41a3-be74-b8c23352d3ad",
+        CreatedByUserId: newReview.UserId,
+        UpdatedByUserId: newReview.UserId,
       });
     } catch (error) {
       console.error("Error submitting review:", error);
@@ -102,6 +130,7 @@ const Movie = () => {
 
   return (
     <div className="container mt-4">
+      <h1>{signedIn}</h1>
       <h1>{movie[0].title}</h1>
       <div className="row">
         <div className="col-md-8">
@@ -124,12 +153,15 @@ const Movie = () => {
               <p className="card-text">
                 <strong>Rating:</strong> {calculateAverageRating()}
               </p>
-              <button
-                className="btn btn-success mt-3"
-                onClick={handleBuyTicket}
-              >
-                Buy Ticket
-              </button>
+              {signedIn && (
+                // Provjera da li je korisnik prijavljen i admin
+                <button
+                  className="btn btn-success mt-3"
+                  onClick={handleBuyTicket}
+                >
+                  Buy Ticket
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -141,51 +173,58 @@ const Movie = () => {
           />
         </div>
       </div>
-      <div className="mt-4">
-        <h2>Add a Review</h2>
-        <form
-          className="form-group"
-          onSubmit={(e) => {
-            e.preventDefault();
-            submitReview();
-          }}
-        >
-          <div className="form-group">
-            <label htmlFor="comment">Comment:</label>
-            <textarea
-              className="form-control"
-              id="comment"
-              name="description"
-              value={newReview.description}
-              onChange={handleReviewChange}
-            ></textarea>
-          </div>
+      {signedIn ? (
+        <div className="mt-4">
+          <h2>Add a Review</h2>
+          <form
+            className="form-group"
+            onSubmit={(e) => {
+              e.preventDefault();
+              submitReview();
+            }}
+          >
+            <div className="form-group">
+              <label htmlFor="comment">Comment:</label>
+              <textarea
+                className="form-control"
+                id="comment"
+                name="description"
+                value={newReview.description}
+                onChange={handleReviewChange}
+              ></textarea>
+            </div>
 
-          <label>Rating:</label>
-          <div className="star-rating">
-            {[...Array(5)].map((star, index) => {
-              index += 1;
-              return (
-                <button
-                  type="button"
-                  key={index}
-                  className={
-                    index <= (hover || newReview.rating) ? "on" : "off"
-                  }
-                  onClick={() => handleRatingChange(index)}
-                  onMouseEnter={() => setHover(index)}
-                  onMouseLeave={() => setHover(newReview.rating)}
-                >
-                  <span className="star">&#9733;</span>
-                </button>
-              );
-            })}
-          </div>
-          <button type="submit" className="btn btn-primary mt-2">
-            Submit Review
-          </button>
-        </form>
-      </div>
+            <label>Rating:</label>
+            <div className="star-rating">
+              {[...Array(5)].map((star, index) => {
+                index += 1;
+                return (
+                  <button
+                    type="button"
+                    key={index}
+                    className={
+                      index <= (hover || newReview.rating) ? "on" : "off"
+                    }
+                    onClick={() => handleRatingChange(index)}
+                    onMouseEnter={() => setHover(index)}
+                    onMouseLeave={() => setHover(newReview.rating)}
+                  >
+                    <span className="star">&#9733;</span>
+                  </button>
+                );
+              })}
+            </div>
+            <button type="submit" className="btn btn-primary mt-2">
+              Submit Review
+            </button>
+          </form>
+        </div>
+      ) : (
+        <div className="mt-4">
+          <h2>Login to Add a Review</h2>
+          <p>You need to login to add a review.</p>
+        </div>
+      )}
       <div className="mt-4">
         <h2>Reviews</h2>
         {reviews.map((review) => (

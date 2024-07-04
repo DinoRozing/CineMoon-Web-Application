@@ -44,6 +44,11 @@ namespace Cinema.Service
 
             return await _hallRepository.GetAvailableHallsAsync(date, projectionLowerLimit, projectionUpperLimit);
         }
+        
+        public async Task<Hall?> GetHallByProjectionIdAsync(Guid projectionId)
+        {
+            return await _hallRepository.GetHallByProjectionIdAsync(projectionId);
+        }
 
         public async Task UpdateHallAsync(Hall hall)
         {

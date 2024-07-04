@@ -9,6 +9,7 @@ namespace Cinema.Service.Common
         Task<IEnumerable<Hall>> GetAllHallsAsync();
         Task<Hall> GetHallByIdAsync(Guid id);
         Task<List<AvailableHallGet>> GetAvailableHallsAsync(DateOnly date, TimeOnly time, Guid movieId);
+        Task<Hall?> GetHallByProjectionIdAsync(Guid projectionId);
         Task UpdateHallAsync(Hall hall);
         Task DeleteHallAsync(Guid id);
     }

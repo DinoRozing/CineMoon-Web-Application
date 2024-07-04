@@ -184,6 +184,32 @@ namespace Cinema.Repository
             }
         }
 
+        public async Task AddReservedSeatAsync(SeatReserved seatReserved)
+        {
+            await using var connection = new NpgsqlConnection(_connectionString);
+            await connection.OpenAsync();
+
+            var commandText = @"
+                INSERT INTO ""SeatReserved"" 
+                    (""Id"", ""TicketId"", ""ProjectionId"", ""SeatId"", ""IsActive"", 
+                    ""DateCreated"", ""DateUpdated"", ""CreatedByUserId"", ""UpdatedByUserId"")
+                VALUES (@Id, @TicketId, @ProjectionId, @SeatId, @IsActive, 
+                    @DateCreated, @DateUpdated, @CreatedByUserId, @UpdatedByUserId);";
+
+            await using var command = new NpgsqlCommand(commandText, connection);
+            command.Parameters.AddWithValue("@Id", seatReserved.Id);
+            command.Parameters.AddWithValue("@TicketId", seatReserved.TicketId);
+            command.Parameters.AddWithValue("@ProjectionId", seatReserved.ProjectionId);
+            command.Parameters.AddWithValue("@SeatId", seatReserved.SeatId);
+            command.Parameters.AddWithValue("@IsActive", seatReserved.IsActive);
+            command.Parameters.AddWithValue("@DateCreated", seatReserved.DateCreated);
+            command.Parameters.AddWithValue("@DateUpdated", seatReserved.DateUpdated);
+            command.Parameters.AddWithValue("@CreatedByUserId", seatReserved.CreatedByUserId);
+            command.Parameters.AddWithValue("@UpdatedByUserId", seatReserved.UpdatedByUserId);
+
+            await command.ExecuteNonQueryAsync();
+            
+        }
         public async Task UpdateSeatAsync(Seat seat)
         {
             using (var connection = new NpgsqlConnection(_connectionString))

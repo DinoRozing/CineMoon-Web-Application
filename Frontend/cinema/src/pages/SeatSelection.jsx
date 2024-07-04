@@ -10,9 +10,7 @@ const SeatSelection = () => {
   const [detailedSelectedSeats, setDetailedSelectedSeats] = useState([]);
   const [seats, setSeats] = useState([]);
   const [reservedSeats, setReservedSeats] = useState([]);
-  console.log(selectedSeats);
-  console.log(detailedSelectedSeats);
-  console.log(selectedSeats);
+
   useEffect(() => {
     axios
       .get(`http://localhost:5058/seat/ByProjection/${projectionId}`)
@@ -35,24 +33,9 @@ const SeatSelection = () => {
       });
   }, [projectionId]);
 
-  // const handleSeatSelect = (seat) => {
-  //   const isSelected = selectedSeats.includes(seat);
-  //   if (isSelected) {
-  //     setSelectedSeats(selectedSeats.filter((selected) => selected !== seat));
-  //     const selected = seats.find(
-  //       (s) => `${s.rowLetter}${s.seatNumber}` === seat
-  //     );
-  //     console.log(
-  //       `Selected seat: ID ${selected.id}, Row ${selected.rowLetter}, Seat ${selected.seatNumber}`
-  //     );
-  //   } else {
-  //     setSelectedSeats([...selectedSeats, seat]);
-  //   }
-  // };
   const handleSeatSelect = (seatId) => {
     const seat = seats.find((s) => `${s.rowLetter}${s.seatNumber}` === seatId);
 
-    // Check if seat is already selected
     const isSelected = selectedSeats.includes(seatId);
 
     if (isSelected) {
@@ -185,7 +168,7 @@ const SeatSelection = () => {
                 {selectedSeats.map((seat) => (
                   <li key={seat} className="list-group-item">
                     Seat: {seat}, Row: {seat.charAt(0)}, Number:{" "}
-                    {seat.substring(1)}
+                    {seat.substring(1)}, Price: €5
                   </li>
                 ))}
               </ul>

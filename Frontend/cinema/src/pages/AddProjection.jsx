@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import ProjectionService from '../services/ProjectionService';
-import MovieService from '../services/MovieService';
-import HallService from '../services/HallService';
+import React, { useState, useEffect } from "react";
+import ProjectionService from "../services/ProjectionService";
+import MovieService from "../services/MovieService";
+import HallService from "../services/HallService";
 import "../App.css";
 import { Link } from 'react-router-dom';
 
@@ -83,7 +83,11 @@ const AddProjection = () => {
       if (projection.date && projection.time && projection.movieId) {
         setLoadingHalls(true);
         try {
-          const response = await HallService.getAvailableHalls(projection.date, projection.time, projection.movieId);
+          const response = await HallService.getAvailableHalls(
+            projection.date,
+            projection.time,
+            projection.movieId
+          );
           setAvailableHalls(response.data);
           setLoadingHalls(false);
         } catch (error) {

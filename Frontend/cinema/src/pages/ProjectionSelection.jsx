@@ -24,6 +24,8 @@ const ProjectionSelection = () => {
     fetchProjections();
   }, [movieId]);
 
+  console.log(projections);
+
   const handleProjectionSelect = (projection) => {
     setSelectedProjection(projection);
   };

@@ -25,6 +25,14 @@ namespace Cinema.WebApi.Controllers
             await _seatService.AddSeatAsync(seat);
             return Ok();
         }
+        
+        [HttpPost("reserved")]
+        public async Task<IActionResult> AddReservedSeatAsync([FromBody] CreateReservedSeat reservedSeat)
+        {
+            await _seatService.AddReservedSeatAsync(reservedSeat);
+            return Ok();
+        }
+
 
         [HttpGet]
         public async Task<IActionResult> GetAllSeatsAsync()

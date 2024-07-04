@@ -15,18 +15,19 @@ namespace Cinema.Repository
             _connectionString = connectionString;
         }
 
-        public async Task CreatePaymentAsync(Payment payment)
+        public async Task AddPaymentAsync(Payment payment)
         {
-            using var connection = new NpgsqlConnection(_connectionString);
+            await using var connection = new NpgsqlConnection(_connectionString);
             await connection.OpenAsync();
 
-            var commandText = @"
-                INSERT INTO ""Payment"" (""Id"", ""TotalPrice"", ""IsActive"", ""DateCreated"", ""DateUpdated"", ""CreatedByUserId"", ""UpdatedByUserId"")
-                VALUES (@Id, @TotalPrice, @IsActive, @DateCreated, @DateUpdated, @CreatedByUserId, @UpdatedByUserId);";
+            var commandText = @"INSERT INTO ""Payment"" 
+                                (""Id"", ""TotalPrice"", ""PaymentDate"", ""IsActive"", ""DateCreated"", ""DateUpdated"", ""CreatedByUserId"", ""UpdatedByUserId"") 
+                                VALUES (@Id, @TotalPrice, @PaymentDate, @IsActive, @DateCreated, @DateUpdated, @CreatedByUserId, @UpdatedByUserId);";
 
-            using var command = new NpgsqlCommand(commandText, connection);
+            await using var command = new NpgsqlCommand(commandText, connection);
             command.Parameters.AddWithValue("@Id", payment.Id);
             command.Parameters.AddWithValue("@TotalPrice", payment.TotalPrice);
+            command.Parameters.AddWithValue("@PaymentDate", payment.PaymentDate);
             command.Parameters.AddWithValue("@IsActive", payment.IsActive);
             command.Parameters.AddWithValue("@DateCreated", payment.DateCreated);
             command.Parameters.AddWithValue("@DateUpdated", payment.DateUpdated);

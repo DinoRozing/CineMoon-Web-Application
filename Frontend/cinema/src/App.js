@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Navbar from "./components/Navbar";
@@ -16,29 +16,41 @@ import Payment from "./pages/Payment";
 import ViewMovies from "./pages/ViewMovies";
 import UpdateMovie from "./pages/UpdateMovie";
 
+export const Context = React.createContext();
 function App() {
+  const [signedIn, setSignedIn] = useState(false);
   return (
     <Router>
-      <Navbar />
-      <Routes>
-        <Route exact path="/" element={<Home />} />
-        <Route exact path="/movie/:id" element={<Movie />} />
-        <Route
-          path="/select-projection/:movieId"
-          element={<ProjectionSelection />}
-        />
-        <Route path="/select-seat/:projectionId" element={<SeatSelection />} />
-        <Route path="/admin" element={<AdminDashboard />} />
-        <Route exact path="/add-projection" element={<AddProjection />} />
+     
+      <Context.Provider value={[signedIn, setSignedIn]}>
+        <Navbar />
+      </Context.Provider>
+      <Context.Provider value={[signedIn, setSignedIn]}>
+        <Routes>
+          <Route exact path="/" element={<Home />} />
+
+          <Route exact path="/movie/:id" element={<Movie />} />
+
+          <Route
+            path="/select-projection/:movieId"
+            element={<ProjectionSelection />}
+          />
+          <Route
+            path="/select-seat/:projectionId"
+            element={<SeatSelection />}
+          />
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route exact path="/add-projection" element={<AddProjection />} />
         <Route exact path="/manage-projections" element={<ManageProjections />} />
-        <Route exact path="/add-movie" element={<AddMovie />} />
-        <Route exact path="/add-actor" element={<AddActor />} />
-        <Route exact path="/view-actors" element={<ViewActors />} />
-        <Route exact path="/update-actor/:id" element={<UpdateActor />} />
-        <Route exact path="/view-movies" element={<ViewMovies />} />
-        <Route exact path="/update-movie/:id" element={<UpdateMovie />} />
-        <Route path="/payment/:projectionId" element={<Payment />} />
-      </Routes>
+          <Route exact path="/add-movie" element={<AddMovie />} />
+          <Route exact path="/add-actor" element={<AddActor />} />
+          <Route exact path="/view-actors" element={<ViewActors />} />
+          <Route exact path="/update-actor/:id" element={<UpdateActor />} />
+          <Route exact path="/view-movies" element={<ViewMovies />} />
+         <Route exact path="/update-movie/:id" element={<UpdateMovie />} />
+          <Route path="/payment/:projectionId" element={<Payment />} />
+        </Routes>
+      </Context.Provider>
     </Router>
   );
 }

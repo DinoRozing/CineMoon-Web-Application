@@ -14,6 +14,7 @@ namespace Cinema.Repository.Common
         Task<IEnumerable<Hall>> GetAllHallsAsync();
         Task<Hall?> GetHallByIdAsync(Guid id);
         Task<List<AvailableHallGet>> GetAvailableHallsAsync(DateOnly date, TimeOnly startTime, TimeOnly endTime);
+        Task<Hall?> GetHallByProjectionIdAsync(Guid projectionId); 
         Task UpdateHallAsync(Hall hall);
         Task DeleteHallAsync(Guid id);
     }

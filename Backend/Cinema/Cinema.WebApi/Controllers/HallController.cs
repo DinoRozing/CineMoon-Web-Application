@@ -60,8 +60,9 @@ namespace Cinema.WebApi.Controllers
             {
                 return StatusCode(500, ex.Message);
             }
-            
         }
+        
+        
         
         [HttpGet("halls")]
         public async Task<IActionResult> GetAvailableHallsAsync(DateOnly date, TimeOnly time, Guid movieId)
@@ -75,7 +76,25 @@ namespace Cinema.WebApi.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
-            } 
+            }
+        }
+        
+        [HttpGet("by-projection/{projectionId}")]
+        public async Task<IActionResult> GetHallByProjectionIdAsync(Guid projectionId)
+        {
+            try
+            {
+                var hall = await _hallService.GetHallByProjectionIdAsync(projectionId);
+                if (hall == null)
+                {
+                    return NotFound();
+                }
+                return Ok(hall);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
         
         [HttpPut("{id}")]

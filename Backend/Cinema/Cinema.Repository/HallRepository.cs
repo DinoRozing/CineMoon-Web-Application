@@ -119,7 +119,34 @@ namespace Cinema.Repository
 
             return halls;
         }
+        
+        public async Task<Hall?> GetHallByProjectionIdAsync(Guid projectionId)
+        {
+            await using var connection = new NpgsqlConnection(_connectionString);
+            var commandText = @"
+                SELECT h.*
+                FROM ""Hall"" h
+                INNER JOIN ""ProjectionHall"" ph ON h.""Id"" = ph.""HallId""
+                WHERE ph.""ProjectionId"" = @ProjectionId;
+            ";
+            await using var command = new NpgsqlCommand(commandText, connection);
+            command.Parameters.AddWithValue("@ProjectionId", projectionId);
 
+            await connection.OpenAsync();
+            await using var reader = await command.ExecuteReaderAsync();
+            if (await reader.ReadAsync())
+            {
+                return new Hall
+                {
+                    Id = reader.GetGuid(reader.GetOrdinal("Id")),
+                    HallNumber = reader.GetInt32(reader.GetOrdinal("HallNumber"))
+                };
+            }
+
+            return null;
+        }
+    
+        
         public async Task UpdateHallAsync(Hall hall)
         {
             await using var connection = new NpgsqlConnection(_connectionString);

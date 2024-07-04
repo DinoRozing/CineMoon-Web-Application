@@ -4,6 +4,8 @@ using Cinema.Model;
 using Cinema.Service.Common;
 using Microsoft.AspNetCore.Mvc;
 using DTO.TicketModel;
+using MailKit.Net.Smtp;
+using MimeKit;
 
 namespace Cinema.WebApi.Controllers
 {
@@ -13,85 +15,77 @@ namespace Cinema.WebApi.Controllers
     {
         private readonly ITicketService _ticketService;
         private readonly IPaymentService _paymentService;
-        private readonly IMapper _mapper;
+        
 
-        public TicketController(ITicketService ticketService, IPaymentService paymentService, IMapper mapper)
+        public TicketController(ITicketService ticketService)
         {
             _ticketService = ticketService;
-            _paymentService = paymentService;
-            _mapper = mapper;
         }
-
+        
         [HttpPost]
-        public async Task<IActionResult> CreateTicketAsync([FromBody] TicketRest ticketRest)
+        public async Task<IActionResult> AddTicketAsync([FromBody] CreateTicket createTicket)
         {
             try
             {
-                var ticket = _mapper.Map<Ticket>(ticketRest);
-                decimal totalPrice = ticketRest.Price;  
-
-                var payment = await _paymentService.CreatePaymentAsync(totalPrice, ticketRest.UserId);
-
-                ticket.PaymentId = payment.Id;
-
-                ticket.Id = Guid.NewGuid();
-                ticket.DateCreated = DateTime.UtcNow;
-                ticket.DateUpdated = DateTime.UtcNow;
-                var createdTicket = await _ticketService.CreateTicketAsync(ticket);
-                var createdTicketRest = _mapper.Map<TicketRest>(createdTicket);
-                return Ok(createdTicketRest);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message); 
-            }
-        }
-        
-        [HttpGet]
-        public async Task<IActionResult> GetAllTicketsAsync()
-        {
-            try
-            {
-                var tickets = await _ticketService.GetAllTicketsAsync();
-                var ticketRest = _mapper.Map<IEnumerable<TicketRest>>(tickets);
-                return Ok(tickets);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message); 
-            }
-        }
-        
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetTicketByIdAsync(Guid id)
-        {
-            try
-            {
-                var ticket = await _ticketService.GetTicketByIdAsync(id);
-                if (ticket == null)
+                var ticket = new Ticket
                 {
-                    return NotFound(); 
-                }
-                var ticketRest = _mapper.Map<TicketRest>(ticket);
-                return Ok(ticket); 
+                    Id = Guid.NewGuid(),
+                    Price = createTicket.Price,
+                    PaymentId = createTicket.PaymentId,
+                    ProjectionId = createTicket.ProjectionId,
+                    UserId = createTicket.UserId,
+                    IsActive = true,
+                    DateCreated = DateTime.UtcNow,
+                    DateUpdated = DateTime.UtcNow,
+                    CreatedByUserId = createTicket.UserId,
+                    UpdatedByUserId = createTicket.UserId
+                };
+
+                var ticketId = await _ticketService.AddTicketAsync(ticket);
+
+                return Ok(new { TicketId = ticketId });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message); 
-            } 
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
-        
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTicket(Guid id)
+
+        [HttpPost("send-email")]
+        public async Task<IActionResult> SendEmailAsync([FromBody] EmailRequest emailRequest)
         {
             try
             {
-                await _ticketService.DeleteTicketAsync(id);
-                return NoContent(); 
+                // SMTP postavke za Outlook
+                string smtpServer = "smtp-mail.outlook.com";
+                int smtpPort = 587;
+                string smtpUsername = "tickets-cinemoon@outlook.com";
+                string smtpPassword = "Testpassword123456";
+                
+                var message = new MimeMessage();
+                message.From.Add(new MailboxAddress("Cine Moon", smtpUsername));
+                message.To.Add(new MailboxAddress(emailRequest.UserEmail, emailRequest.UserEmail));
+                message.Subject = "Your Ticket Reservation Details";
+
+                var bodyBuilder = new BodyBuilder
+                {
+                    HtmlBody = $"<p>Dear customer,</p><p>Here are your reserved seats:</p><ul>{string.Join("", emailRequest.TicketIds.Select(id => $"<li>Ticket ID: {id}</li>"))}</ul>"
+                };
+                message.Body = bodyBuilder.ToMessageBody();
+                
+                using (var client = new SmtpClient())
+                {
+                    await client.ConnectAsync(smtpServer, smtpPort, false);
+                    await client.AuthenticateAsync(smtpUsername, smtpPassword);
+                    await client.SendAsync(message);
+                    await client.DisconnectAsync(true);
+                }
+
+                return Ok("Email sent successfully.");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message); 
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
     }
