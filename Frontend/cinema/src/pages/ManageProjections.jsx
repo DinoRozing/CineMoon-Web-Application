@@ -195,7 +195,7 @@ const ManageProjections = () => {
 
         {selectedProjection && (
           <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
-            <Modal.Header closeButton>
+          <Modal.Header closeButton>
               <Modal.Title>Edit Projection</Modal.Title>
             </Modal.Header>
             <Modal.Body>
