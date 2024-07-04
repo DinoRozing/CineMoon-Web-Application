@@ -110,8 +110,6 @@ const ManageProjections = () => {
 
   const handleUpdateProjection = async () => {
     try {
-      console.log("Updating projection:", selectedProjection);
-
       const updatedProjection = {
         id: selectedProjection.id,
         date: selectedProjection.date,
@@ -144,6 +142,7 @@ const ManageProjections = () => {
       ...prevState,
       [name]: name === 'time' ? value + ':00' : value
     }));
+    console.log(movies);
   };
 
   if (loading || loadingMovies) {
@@ -195,7 +194,7 @@ const ManageProjections = () => {
 
         {selectedProjection && (
           <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
-          <Modal.Header closeButton>
+            <Modal.Header closeButton>
               <Modal.Title>Edit Projection</Modal.Title>
             </Modal.Header>
             <Modal.Body>

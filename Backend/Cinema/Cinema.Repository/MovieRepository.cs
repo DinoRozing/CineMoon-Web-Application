@@ -139,7 +139,7 @@ namespace Cinema.Repository
                     Language = reader.GetString(reader.GetOrdinal("Language")),
                     CoverUrl = reader.GetString(reader.GetOrdinal("CoverUrl")),
                     TrailerUrl = reader.GetString(reader.GetOrdinal("TrailerUrl")),
-                    ActorNames = [reader.GetString(reader.GetOrdinal("ActorNames"))]
+                    ActorNames = reader.IsDBNull(reader.GetOrdinal("ActorNames")) ? new List<string>() : reader.GetString(reader.GetOrdinal("ActorNames")).Split(", ").ToList(),
                 };
             }
 

@@ -75,12 +75,9 @@ namespace Cinema.WebApi.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
-            }
-            
-            
+            } 
         }
         
-
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateHallAsync(Guid id, [FromBody] Hall hall)
         {

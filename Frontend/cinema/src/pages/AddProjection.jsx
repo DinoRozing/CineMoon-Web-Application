@@ -10,7 +10,7 @@ const AddProjection = () => {
     date: '',
     time: '',
     movieId: '',
-    hall: '',
+    hallId: '', 
     userId: '89044808-643f-480a-99be-8afc1dd7c7d3'
   };
 
@@ -32,7 +32,7 @@ const AddProjection = () => {
   const [errorHalls, setErrorHalls] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
 
-  const isFormValid = projection.date && projection.time && projection.movieId && projection.hall;
+  const isFormValid = projection.date && projection.time && projection.movieId && projection.hallId;
 
   useEffect(() => {
     const fetchFilteredMovies = async () => {
@@ -54,14 +54,16 @@ const AddProjection = () => {
     const { name, value } = e.target;
     setProjection((prev) => ({
       ...prev,
-      [name]: name === 'time' ? value + ':00' : value
+      [name]: name === 'time' ? value + ':00' : value,
     }));
   };
 
   const handleSubmit = async (e) => {
+    console.log(projection)
     e.preventDefault();
     try {
-      const response = await ProjectionService.addProjection(projection);
+      const { userId, ...projectionData } = projection;
+      const response = await ProjectionService.addProjection(projectionData);
       console.log("Projection added:", response.data);
       setSuccessMessage('Projection added successfully!');
       setProjection(initialProjectionState); 
@@ -69,7 +71,6 @@ const AddProjection = () => {
         setSuccessMessage('');
       }, 2500); 
     } catch (error) {
-      console.error("Error adding projection:", error);
       if (error.response) {
         console.error("Response data:", error.response.data);
       }
@@ -87,7 +88,12 @@ const AddProjection = () => {
           setLoadingHalls(false);
         } catch (error) {
           console.error("Error fetching available halls:", error);
-          setErrorHalls("Error fetching available halls. Please try again later.");
+          if (error.response && error.response.data) {
+            console.error("Response data:", error.response.data);
+            setErrorHalls(`Error fetching available halls: ${error.response.data}`);
+          } else {
+            setErrorHalls("Error fetching available halls. Please try again later.");
+          }
           setLoadingHalls(false);
         }
       }
@@ -95,7 +101,7 @@ const AddProjection = () => {
   
     fetchAvailableHalls();
   }, [projection.date, projection.time, projection.movieId]);
-  
+
   return (
     <>
       <div className="container mt-4">
@@ -103,6 +109,11 @@ const AddProjection = () => {
         {successMessage && (
           <div className="alert alert-success">
             {successMessage}
+          </div>
+        )}
+        {error && (
+          <div className="alert alert-danger">
+            {error}
           </div>
         )}
         <form id="projectionForm" onSubmit={handleSubmit}>
@@ -149,7 +160,7 @@ const AddProjection = () => {
             </select>
           </div>
           <div className="form-group">
-            <label htmlFor="hall">Hall:</label>
+            <label htmlFor="hallId">Hall:</label>
             {(projection.date && projection.time && projection.movieId) ? (
               loadingHalls ? (
                 <p>Loading halls...</p>
@@ -158,10 +169,10 @@ const AddProjection = () => {
               ) : (
                 <select
                   className="form-control"
-                  id="hall"
-                  name="hall"
-                  value={projection.hall}
-                  onChange={handleChange}
+                  id="hallId"
+                  name="hallId" 
+                  value={projection.hallId}
+                  onChange={handleChange} 
                   required
                 >
                   <option value="">Select a hall...</option>
@@ -176,7 +187,6 @@ const AddProjection = () => {
               <p>Please select date, time, and movie first.</p>
             )}
           </div>
-          
           <button type="submit" className="btn btn-primary" disabled={!isFormValid}>
             Add projection
           </button>
