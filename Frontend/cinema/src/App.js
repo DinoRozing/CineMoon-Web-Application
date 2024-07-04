@@ -10,7 +10,8 @@ import SeatSelection from "./pages/SeatSelection";
 import AdminDashboard from "./pages/AdminDashboard";
 import AddMovie from "./pages/AddMovie";
 import AddActor from "./pages/AddActor";
-import DeleteActor from "./pages/DeleteActor";
+import ViewActors from "./pages/ViewActors";
+import UpdateActor from "./pages/UpdateActor";
 import Payment from "./pages/Payment";
 import ViewMovies from "./pages/ViewMovies";
 import UpdateMovie from "./pages/UpdateMovie";
@@ -32,7 +33,8 @@ function App() {
         <Route exact path="/manage-projections" element={<ManageProjections />} />
         <Route exact path="/add-movie" element={<AddMovie />} />
         <Route exact path="/add-actor" element={<AddActor />} />
-        <Route exact path="/delete-actor" element={<DeleteActor />} />
+        <Route exact path="/view-actors" element={<ViewActors />} />
+        <Route exact path="/update-actor/:id" element={<UpdateActor />} />
         <Route exact path="/view-movies" element={<ViewMovies />} />
         <Route exact path="/update-movie/:id" element={<UpdateMovie />} />
         <Route path="/payment/:projectionId" element={<Payment />} />

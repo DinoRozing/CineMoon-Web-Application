@@ -28,7 +28,7 @@ const AdminDashboard = () => {
               <Link to="/add-projection" className="btn btn-primary">
                 Add Projection
               </Link>
-              <Link to="/manage-projections" className="btn btn-danger ms-2">
+              <Link to="/manage-projections" className="btn btn-success ms-2">
                 Manage Projections
               </Link>
             </div>
@@ -51,12 +51,12 @@ const AdminDashboard = () => {
           <div className="card mb-3">
             <div className="card-body">
               <h5 className="card-title">Manage Actors</h5>
-              <p className="card-text">Add and delete movie actors.</p>
+              <p className="card-text">Add, delete, and manage movie actors.</p>
               <Link to="/add-actor" className="btn btn-primary">
                 Add Actor
               </Link>
-              <Link to="/delete-actor" className="btn btn-danger ms-2">
-                Delete Actor
+              <Link to="/view-actors" className="btn btn-success ms-2">
+                View Actors
               </Link>
             </div>
           </div>

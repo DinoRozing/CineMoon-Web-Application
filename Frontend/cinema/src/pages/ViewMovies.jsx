@@ -9,7 +9,7 @@ const ViewMovies = () => {
     const fetchMovies = async () => {
       try {
         const filters = {
-          sortBy: "Title",  // Ensure this matches the column name in your database
+          sortBy: "Title", 
           sortOrder: "ASC",
           pageNumber: 1,
           pageSize: 10,
@@ -52,7 +52,7 @@ const ViewMovies = () => {
               <td>{movie.description}</td>
               <td>{movie.duration}</td>
               <td>
-                <Link to={`/update-movie/${movie.movieId}`} className="btn btn-warning btn-sm me-2">
+                <Link to={`/update-movie/${movie.movieId}`} className="btn btn-primary btn-sm me-2">
                   Update
                 </Link>
                 <button
