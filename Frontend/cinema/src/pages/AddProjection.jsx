@@ -11,7 +11,7 @@ const AddProjection = () => {
     time: '',
     movieId: '',
     hall: '',
-    userId: '8583110f-f633-45bb-8a3d-8647922b09ed'
+    userId: '89044808-643f-480a-99be-8afc1dd7c7d3'
   };
 
   const [projection, setProjection] = useState(initialProjectionState);
@@ -31,6 +31,8 @@ const AddProjection = () => {
   const [loadingHalls, setLoadingHalls] = useState(false);
   const [errorHalls, setErrorHalls] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
+
+  const isFormValid = projection.date && projection.time && projection.movieId && projection.hall;
 
   useEffect(() => {
     const fetchFilteredMovies = async () => {
@@ -175,7 +177,7 @@ const AddProjection = () => {
             )}
           </div>
           
-          <button type="submit" className="btn btn-primary">
+          <button type="submit" className="btn btn-primary" disabled={!isFormValid}>
             Add projection
           </button>
 
