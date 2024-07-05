@@ -1,17 +1,24 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import ProjectionService from "../services/ProjectionService";
 import MovieService from "../services/MovieService";
 import HallService from "../services/HallService";
 import "../App.css";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
+import { AuthenticationContext } from "../context/AuthenticationContextProvider";
+import { jwtDecode } from "jwt-decode";
 
 const AddProjection = () => {
+  const { token } = useContext(AuthenticationContext);
+  const decodedToken = jwtDecode(token);
   const initialProjectionState = {
-    date: '',
-    time: '',
-    movieId: '',
-    hallId: '', 
-    userId: '89044808-643f-480a-99be-8afc1dd7c7d3'
+    date: "",
+    time: "",
+    movieId: "",
+    hallId: "",
+    userId: decodedToken.UserId,
+    isActive: true,
+    createdByUserId: decodedToken.UserId,
+    updatedByUserId: decodedToken.UserId,
   };
 
   const [projection, setProjection] = useState(initialProjectionState);
@@ -24,15 +31,19 @@ const AddProjection = () => {
     sortBy: "Duration",
     sortOrder: "DESC",
     pageNumber: 1,
-    pageSize: 4,
+    pageSize: 0,
   });
 
   const [availableHalls, setAvailableHalls] = useState([]);
   const [loadingHalls, setLoadingHalls] = useState(false);
   const [errorHalls, setErrorHalls] = useState(null);
-  const [successMessage, setSuccessMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState("");
 
-  const isFormValid = projection.date && projection.time && projection.movieId && projection.hallId;
+  const isFormValid =
+    projection.date &&
+    projection.time &&
+    projection.movieId &&
+    projection.hallId;
 
   useEffect(() => {
     const fetchFilteredMovies = async () => {
@@ -54,30 +65,51 @@ const AddProjection = () => {
     const { name, value } = e.target;
     setProjection((prev) => ({
       ...prev,
-      [name]: name === 'time' ? value + ':00' : value,
+      [name]: value,
     }));
   };
 
   const handleSubmit = async (e) => {
-    console.log(projection)
     e.preventDefault();
     try {
-      const { userId, ...projectionData } = projection;
-      const response = await ProjectionService.addProjection(projectionData);
+      const { userId, hallId, ...projectionData } = projection;
+      const dataToSend = {
+        ...projectionData,
+        userId,
+        isActive: true,
+        createdByUserId: userId,
+        updatedByUserId: userId,
+        projectionHalls: [{ hallId: hallId }],
+      };
+
+      // Provjerite da li vrijeme ima format "HH:mm:ss"
+      dataToSend.time =
+        dataToSend.time.length === 5
+          ? dataToSend.time + ":00"
+          : dataToSend.time;
+
+      console.log(dataToSend);
+      const response = await ProjectionService.addProjection(dataToSend);
       console.log("Projection added:", response.data);
-      setSuccessMessage('Projection added successfully!');
-      setProjection(initialProjectionState); 
+      setSuccessMessage("Projection added successfully!");
+      setProjection(initialProjectionState);
       setTimeout(() => {
-        setSuccessMessage('');
-      }, 2500); 
+        setSuccessMessage("");
+      }, 2500);
     } catch (error) {
       if (error.response) {
         console.error("Response data:", error.response.data);
+        // Provjerite i dodajte točne validacijske pogreške
+        if (error.response.data.errors) {
+          console.error("Validation errors:", error.response.data.errors);
+        }
       }
-      setError("Failed to add projection. Please check the data and try again.");
+      setError(
+        "Failed to add projection. Please check the data and try again."
+      );
     }
   };
-  
+
   useEffect(() => {
     const fetchAvailableHalls = async () => {
       if (projection.date && projection.time && projection.movieId) {
@@ -94,15 +126,19 @@ const AddProjection = () => {
           console.error("Error fetching available halls:", error);
           if (error.response && error.response.data) {
             console.error("Response data:", error.response.data);
-            setErrorHalls(`Error fetching available halls: ${error.response.data}`);
+            setErrorHalls(
+              `Error fetching available halls: ${error.response.data}`
+            );
           } else {
-            setErrorHalls("Error fetching available halls. Please try again later.");
+            setErrorHalls(
+              "Error fetching available halls. Please try again later."
+            );
           }
           setLoadingHalls(false);
         }
       }
     };
-  
+
     fetchAvailableHalls();
   }, [projection.date, projection.time, projection.movieId]);
 
@@ -111,15 +147,9 @@ const AddProjection = () => {
       <div className="container mt-4">
         <h2 className="text-center mb-4">Add new projection</h2>
         {successMessage && (
-          <div className="alert alert-success">
-            {successMessage}
-          </div>
+          <div className="alert alert-success">{successMessage}</div>
         )}
-        {error && (
-          <div className="alert alert-danger">
-            {error}
-          </div>
-        )}
+        {error && <div className="alert alert-danger">{error}</div>}
         <form id="projectionForm" onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="date">Date:</label>
@@ -165,7 +195,7 @@ const AddProjection = () => {
           </div>
           <div className="form-group">
             <label htmlFor="hallId">Hall:</label>
-            {(projection.date && projection.time && projection.movieId) ? (
+            {projection.date && projection.time && projection.movieId ? (
               loadingHalls ? (
                 <p>Loading halls...</p>
               ) : availableHalls.length === 0 ? (
@@ -174,9 +204,9 @@ const AddProjection = () => {
                 <select
                   className="form-control"
                   id="hallId"
-                  name="hallId" 
+                  name="hallId"
                   value={projection.hallId}
-                  onChange={handleChange} 
+                  onChange={handleChange}
                   required
                 >
                   <option value="">Select a hall...</option>
@@ -191,7 +221,11 @@ const AddProjection = () => {
               <p>Please select date, time, and movie first.</p>
             )}
           </div>
-          <button type="submit" className="btn btn-primary" disabled={!isFormValid}>
+          <button
+            type="submit"
+            className="btn btn-primary"
+            disabled={!isFormValid}
+          >
             Add projection
           </button>
 
@@ -199,7 +233,9 @@ const AddProjection = () => {
             Manage projections
           </Link>
         </form>
-        {errorHalls && <div className="alert alert-danger mt-3">{errorHalls}</div>}
+        {errorHalls && (
+          <div className="alert alert-danger mt-3">{errorHalls}</div>
+        )}
       </div>
     </>
   );

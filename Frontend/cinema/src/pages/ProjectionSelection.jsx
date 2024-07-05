@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
 import ProjectionSelector from "../components/ProjectionSelector";
+import ProjectionService from "../services/ProjectionService";
 
 const ProjectionSelection = () => {
   const { movieId } = useParams();
@@ -12,8 +12,8 @@ const ProjectionSelection = () => {
   useEffect(() => {
     const fetchProjections = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:5058/projection/movie/${movieId}`
+        const response = await ProjectionService.getProjectionByMovieId(
+          movieId
         );
         setProjections(response.data);
       } catch (error) {

@@ -1,12 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import AddMovieForm from "../components/AddMovieForm";
 import MovieService from "../services/MovieService";
 import ActorService from "../services/ActorService";
 import GenreService from "../services/GenreService";
 import LanguageService from "../services/LanguageService";
+import { AuthenticationContext } from "../context/AuthenticationContextProvider";
+import { jwtDecode } from "jwt-decode";
 
 const AddMovie = () => {
+  const { token } = useContext(AuthenticationContext);
+  const decodedToken = jwtDecode(token);
   const [actors, setActors] = useState([]);
   const [genres, setGenres] = useState([]);
   const [languages, setLanguages] = useState([]);
@@ -32,13 +36,13 @@ const AddMovie = () => {
   }, []);
 
   const handleAddMovie = async (movieData) => {
-    movieData.createdByUserId = "8583110f-f633-45bb-8a3d-8647922b09ed";
-    movieData.updatedByUserId = "8583110f-f633-45bb-8a3d-8647922b09ed";
+    movieData.createdByUserId = decodedToken.UserId;
+    movieData.updatedByUserId = decodedToken.UserId;
 
     try {
       await MovieService.addMovie(movieData);
       alert("Movie added successfully");
-      navigate("/admin");
+      navigate("/view-movies");
     } catch (error) {
       console.error("Error adding movie:", error);
       alert("Failed to add movie: " + error.message);
@@ -50,8 +54,8 @@ const AddMovie = () => {
       const actorData = {
         name: actorName,
         isActive: true,
-        createdByUserId: "8583110f-f633-45bb-8a3d-8647922b09ed",
-        updatedByUserId: "8583110f-f633-45bb-8a3d-8647922b09ed",
+        createdByUserId: decodedToken.UserId,
+        updatedByUserId: decodedToken.UserId,
       };
       const response = await ActorService.addActor(actorData);
       const newActorId = response.data.id;

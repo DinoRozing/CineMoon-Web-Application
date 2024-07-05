@@ -1,8 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import ActorService from "../services/ActorService";
+import { AuthenticationContext } from "../context/AuthenticationContextProvider";
+import { jwtDecode } from "jwt-decode";
 
 const UpdateActor = () => {
+  const { token } = useContext(AuthenticationContext);
+  const decodedToken = jwtDecode(token);
   const { id } = useParams();
   const [name, setName] = useState("");
   const navigate = useNavigate();
@@ -28,8 +32,8 @@ const UpdateActor = () => {
         id,
         name,
         isActive: true,
-        createdByUserId: "8583110f-f633-45bb-8a3d-8647922b09ed",
-        updatedByUserId: "8583110f-f633-45bb-8a3d-8647922b09ed",
+        createdByUserId: decodedToken.UserId,
+        updatedByUserId: decodedToken.UserId,
       };
       await ActorService.updateActor(id, actorData);
       alert("Actor updated successfully");

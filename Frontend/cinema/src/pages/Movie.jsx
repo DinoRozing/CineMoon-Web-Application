@@ -4,7 +4,6 @@ import MovieService from "../services/MovieService";
 import ReviewService from "../services/ReviewService";
 import "../App.css";
 import StarDisplay from "../components/StarDisplay";
-import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { Context } from "../App";
 
@@ -88,15 +87,7 @@ const Movie = () => {
 
   const submitReview = async () => {
     try {
-      const response = await axios.post(
-        "http://localhost:5058/review",
-        newReview,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      const response = await ReviewService.addReview(newReview);
       const addedReview = response.data;
       setReviews([...reviews, addedReview]);
       setNewReview({
@@ -154,7 +145,6 @@ const Movie = () => {
                 <strong>Rating:</strong> {calculateAverageRating()}
               </p>
               {signedIn && (
-                // Provjera da li je korisnik prijavljen i admin
                 <button
                   className="btn btn-success mt-3"
                   onClick={handleBuyTicket}

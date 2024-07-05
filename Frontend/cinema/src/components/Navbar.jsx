@@ -5,6 +5,7 @@ import { jwtDecode } from "jwt-decode";
 import Login from "./Login";
 import Register from "./Register";
 import { Context } from "../App";
+import { AuthenticationContext } from "../context/AuthenticationContextProvider";
 
 Modal.setAppElement("#root");
 
@@ -15,6 +16,11 @@ const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userName, setUserName] = useState("");
   const navigate = useNavigate();
+  const [role, setRole] = useState("");
+
+  const { saveToken } = useContext(AuthenticationContext);
+
+  const { token } = useContext(AuthenticationContext);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -25,8 +31,13 @@ const Navbar = () => {
           decodedToken[
             "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"
           ];
+        const userRole = decodedToken.Role;
+        setRole(userRole);
+
         if (name) {
           setUserName(name);
+          setRole(userRole);
+
           setIsLoggedIn(true);
         } else {
           setIsLoggedIn(false);
@@ -38,7 +49,7 @@ const Navbar = () => {
     } else {
       setIsLoggedIn(false);
     }
-  }, []);
+  }, [saveToken]);
 
   const customModalStyles = {
     content: {
@@ -55,6 +66,7 @@ const Navbar = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    saveToken(null);
     setIsLoggedIn(false);
     setSignedIn(false);
     setUserName("");
@@ -62,17 +74,22 @@ const Navbar = () => {
   };
 
   const handleLoginSuccess = (token) => {
-    localStorage.setItem("token", token);
     setLoginModalIsOpen(false);
     setRegisterModalIsOpen(false);
     try {
       const decodedToken = jwtDecode(token);
       const name = decodedToken.Name;
+      const role = decodedToken.Role;
       if (name) {
         setUserName(name);
         setIsLoggedIn(true);
       } else {
         setIsLoggedIn(false);
+      }
+      if (role) {
+        if (role === "Admin") {
+          navigate("/admin");
+        }
       }
     } catch (error) {
       console.error("Error decoding JWT:", error);
@@ -98,28 +115,30 @@ const Navbar = () => {
       </button>
       <div className="collapse navbar-collapse" id="navbarSupportedContent">
         <ul className="navbar-nav ml-auto">
-          <li className="nav-item dropdown">
-            <a
-              className="nav-link dropdown-toggle"
-              href="#"
-              id="navbarDropdown"
-              role="button"
-              data-toggle="dropdown"
-              aria-haspopup="true"
-              aria-expanded="false"
-            >
-              Menu
-            </a>
-            <div
-              className="dropdown-menu dropdown-menu-right"
-              aria-labelledby="navbarDropdown"
-            >
-              <Link className="dropdown-item" to="/addProjection">
-                Payment History
-              </Link>
-            </div>
-          </li>
-          {!isLoggedIn && (
+          {token && role === "User" && (
+            <li className="nav-item dropdown">
+              <a
+                className="nav-link dropdown-toggle"
+                href="#"
+                id="navbarDropdown"
+                role="button"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                Menu
+              </a>
+              <div
+                className="dropdown-menu dropdown-menu-right"
+                aria-labelledby="navbarDropdown"
+              >
+                <Link className="dropdown-item" to="/user-payments">
+                  Payment History
+                </Link>
+              </div>
+            </li>
+          )}
+          {!token && (
             <>
               <li className="nav-item">
                 <a
@@ -141,7 +160,7 @@ const Navbar = () => {
               </li>
             </>
           )}
-          {isLoggedIn && (
+          {token && (
             <>
               <li className="nav-item">
                 <span className="nav-link">Hello, {userName}</span>

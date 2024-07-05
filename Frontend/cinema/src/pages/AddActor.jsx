@@ -1,8 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import ActorService from "../services/ActorService";
+import { AuthenticationContext } from "../context/AuthenticationContextProvider";
+import { jwtDecode } from "jwt-decode";
 
 const AddActor = () => {
+  const { token } = useContext(AuthenticationContext);
+  const decodedToken = jwtDecode(token);
   const [name, setName] = useState("");
   const navigate = useNavigate();
 
@@ -13,8 +17,8 @@ const AddActor = () => {
       const actorData = {
         name,
         isActive: true,
-        createdByUserId: "8583110f-f633-45bb-8a3d-8647922b09ed",
-        updatedByUserId: "8583110f-f633-45bb-8a3d-8647922b09ed",
+        createdByUserId: decodedToken.UserId,
+        updatedByUserId: decodedToken.UserId,
       };
       await ActorService.addActor(actorData);
       alert("Actor added successfully");
@@ -40,11 +44,7 @@ const AddActor = () => {
             onChange={(e) => setName(e.target.value)}
             required
           />
-          <button
-            className="btn btn-primary"
-            type="submit"
-            id="button-addon2"
-          >
+          <button className="btn btn-primary" type="submit" id="button-addon2">
             Add Actor
           </button>
         </div>

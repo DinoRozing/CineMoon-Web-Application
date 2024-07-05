@@ -67,10 +67,37 @@ namespace Cinema.WebApi.Controllers
                 message.To.Add(new MailboxAddress(emailRequest.UserEmail, emailRequest.UserEmail));
                 message.Subject = "Your Ticket Reservation Details";
 
+                // Ispis podataka prije slanja e-maila
+                Console.WriteLine($"UserEmail: {emailRequest.UserEmail}");
+                Console.WriteLine("Ticket IDs:");
+                foreach (var ticketId in emailRequest.TicketIds)
+                {
+                    Console.WriteLine(ticketId);
+                }
+                Console.WriteLine("Reserved Seats:");
+                foreach (var seat in emailRequest.Seats)
+                {
+                    Console.WriteLine($"Seat ID: {seat.Id}, Row: {seat.RowLetter}, Number: {seat.SeatNumber}, Hall: {seat.HallNumber}");
+                }
+
                 var bodyBuilder = new BodyBuilder
                 {
-                    HtmlBody = $"<p>Dear customer,</p><p>Here are your reserved seats:</p><ul>{string.Join("", emailRequest.TicketIds.Select(id => $"<li>Ticket ID: {id}</li>"))}</ul>"
+                    HtmlBody = $@"
+                    <p>Dear customer,</p>
+                    <p>Here are your reserved seats:</p>
+                    <ul>
+                        {string.Join("", emailRequest.Seats.Select(seat => $@"
+                            <li>
+                                Seat ID: {seat.Id}<br/>
+                                Row: {seat.RowLetter}<br/>
+                                Seat Number: {seat.SeatNumber}<br/>
+                                Hall Number: {seat.HallNumber}
+                            </li>
+                        "))}
+                    </ul>
+    "
                 };
+
                 message.Body = bodyBuilder.ToMessageBody();
                 
                 using (var client = new SmtpClient())

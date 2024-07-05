@@ -2,11 +2,12 @@ import React, { useState, useEffect } from "react";
 import { useLocation, useHistory } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Payment = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { detailedSelectedSeats, projectionId } = location.state;
-
   const [paymentId, setPaymentId] = useState(null);
   const [ticketIds, setTicketIds] = useState([]);
   const [decodedUser, setDecodedUser] = useState({});
@@ -51,9 +52,7 @@ const Payment = () => {
 
       const responseDataPayment = await responsePayment.json();
       const paymentId = responseDataPayment.paymentId;
-      console.log("PaymentID:", paymentId);
 
-      // Kreiranje tiketa (tickets)
       const ticketPromises = detailedSelectedSeats.map(async (seat) => {
         const createTicketData = {
           Price: 5.0,
@@ -104,8 +103,6 @@ const Payment = () => {
           if (!responseReservedSeat.ok) {
             throw new Error("Error creating reserved seats");
           }
-
-          //return responseReservedSeat.json();
         }
       );
 
@@ -114,19 +111,22 @@ const Payment = () => {
       const emailRequest = {
         UserEmail: decodedUser.Email,
         TicketIds: createdTicketIds,
+        Seats: detailedSelectedSeats,
       };
+      console.log(emailRequest);
 
       const responseEmail = await axios.post(
         "http://localhost:5058/ticket/send-email",
         emailRequest
       );
-      console.log("Email sent:", responseEmail.data);
 
-      console.log("All operations completed successfully");
-      setSuccessMessage("Payment successful");
+      setSuccessMessage(
+        "Payment successful. Please check your email for ticket details."
+      );
       setTimeout(() => {
         setSuccessMessage("");
-      }, 2500);
+        navigate("/user-payments");
+      }, 3000);
     } catch (error) {
       console.error("Error:", error.message);
     }
@@ -172,7 +172,7 @@ const Payment = () => {
               <div className="mb-3">
                 <label className="form-label">CVV</label>
                 <input
-                  type="text"
+                  type="password"
                   className="form-control"
                   value={cvv}
                   onChange={(e) => setCvv(e.target.value)}

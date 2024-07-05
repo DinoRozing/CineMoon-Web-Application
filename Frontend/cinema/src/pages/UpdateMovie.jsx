@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import AddMovieForm from "../components/AddMovieForm";
 import MovieService from "../services/MovieService";
 import ActorService from "../services/ActorService";
 import GenreService from "../services/GenreService";
 import LanguageService from "../services/LanguageService";
+import { jwtDecode } from "jwt-decode";
+import { AuthenticationContext } from "../context/AuthenticationContextProvider";
 
 const UpdateMovie = () => {
   const { id } = useParams();
@@ -14,6 +16,21 @@ const UpdateMovie = () => {
   const [actors, setActors] = useState([]);
   const [genres, setGenres] = useState([]);
   const [languages, setLanguages] = useState([]);
+  const [decodedUser, setDecodedUser] = useState({});
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        setDecodedUser(decodedToken);
+      } catch (error) {
+        console.error("Invalid token specified:", error);
+      }
+    } else {
+      console.error("No token found in localStorage.");
+    }
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -53,9 +70,12 @@ const UpdateMovie = () => {
       const actorData = {
         name: actorName,
         isActive: true,
-        createdByUserId: "8583110f-f633-45bb-8a3d-8647922b09ed",
-        updatedByUserId: "8583110f-f633-45bb-8a3d-8647922b09ed",
+        createdByUserId: decodedUser.UserId,
+        updatedByUserId: decodedUser.UserId,
       };
+
+      // console.log("Actor data:", actorData);
+      // console.log("Token u updateu", decodedToken);
       const response = await ActorService.addActor(actorData);
       const newActorId = response.data.id;
 

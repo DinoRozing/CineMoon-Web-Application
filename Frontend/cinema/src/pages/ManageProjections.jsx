@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { Modal, Button, Form } from 'react-bootstrap';
-import ProjectionService from '../services/ProjectionService';
-import MovieService from '../services/MovieService';
-import HallService from '../services/HallService';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { Modal, Button, Form } from "react-bootstrap";
+import ProjectionService from "../services/ProjectionService";
+import MovieService from "../services/MovieService";
+import HallService from "../services/HallService";
+import { Link } from "react-router-dom";
 import "../App.css";
 
 const ManageProjections = () => {
@@ -18,7 +18,7 @@ const ManageProjections = () => {
   const [availableHalls, setAvailableHalls] = useState([]);
   const [loadingHalls, setLoadingHalls] = useState(false);
   const [errorHalls, setErrorHalls] = useState(null);
-  const [successMessage, setSuccessMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState("");
   const [filters, setFilters] = useState({
     genreId: "",
     languageId: "",
@@ -61,30 +61,37 @@ const ManageProjections = () => {
   }, [filters]);
 
   const formatDate = (dateString) => {
-    const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+    const options = { year: "numeric", month: "2-digit", day: "2-digit" };
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-GB', options);
+    return date.toLocaleDateString("en-GB", options);
   };
 
   const formatDateForInput = (dateString) => {
     const date = new Date(dateString);
     date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
-    return date.toISOString().split('T')[0];
+    return date.toISOString().split("T")[0];
   };
 
   const formatTime = (timeString) => {
     const time = new Date(`1970-01-01T${timeString}`);
-    const options = { hour: '2-digit', minute: '2-digit' };
-    return time.toLocaleTimeString('en-GB', options);
+    const options = { hour: "2-digit", minute: "2-digit" };
+    return time.toLocaleTimeString("en-GB", options);
   };
 
   const handleDeleteProjection = async (projectionId) => {
     try {
       await ProjectionService.deleteProjection(projectionId);
-      setProjections(projections.filter(projection => projection.id !== projectionId));
+      setProjections(
+        projections.filter((projection) => projection.id !== projectionId)
+      );
     } catch (error) {
-      console.error(`Error deleting projection with ID ${projectionId}:`, error);
-      setError(`Error deleting projection with ID ${projectionId}. Please try again later.`);
+      console.error(
+        `Error deleting projection with ID ${projectionId}:`,
+        error
+      );
+      setError(
+        `Error deleting projection with ID ${projectionId}. Please try again later.`
+      );
     }
   };
 
@@ -97,7 +104,11 @@ const ManageProjections = () => {
 
     try {
       setLoadingHalls(true);
-      const response = await HallService.getAvailableHalls(projection.date, projection.time, projection.movieId);
+      const response = await HallService.getAvailableHalls(
+        projection.date,
+        projection.time,
+        projection.movieId
+      );
       setAvailableHalls(response.data);
       setLoadingHalls(false);
       setShowEditModal(true);
@@ -116,31 +127,43 @@ const ManageProjections = () => {
         time: selectedProjection.time,
         movieId: selectedProjection.movieId,
         hall: selectedProjection.hall,
-        userId: selectedProjection.userId
+        userId: selectedProjection.userId,
       };
 
-      await ProjectionService.updateProjection(selectedProjection.id, updatedProjection);
-      setProjections(projections.map(proj => proj.id === selectedProjection.id ? updatedProjection : proj));
+      await ProjectionService.updateProjection(
+        selectedProjection.id,
+        updatedProjection
+      );
+      setProjections(
+        projections.map((proj) =>
+          proj.id === selectedProjection.id ? updatedProjection : proj
+        )
+      );
       setShowEditModal(false);
 
-      setSuccessMessage('Projection updated successfully!');
+      setSuccessMessage("Projection updated successfully!");
       setTimeout(() => {
-        setSuccessMessage('');
+        setSuccessMessage("");
       }, 2500);
     } catch (error) {
-      console.error(`Error updating projection with ID ${selectedProjection.id}:`, error);
+      console.error(
+        `Error updating projection with ID ${selectedProjection.id}:`,
+        error
+      );
       if (error.response) {
         console.error("Server error:", error.response.data);
       }
-      setError(`Error updating projection with ID ${selectedProjection.id}. Please try again later.`);
+      setError(
+        `Error updating projection with ID ${selectedProjection.id}. Please try again later.`
+      );
     }
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setSelectedProjection(prevState => ({
+    setSelectedProjection((prevState) => ({
       ...prevState,
-      [name]: name === 'time' ? value + ':00' : value
+      [name]: name === "time" ? value + ":00" : value,
     }));
     console.log(movies);
   };
@@ -158,11 +181,9 @@ const ManageProjections = () => {
       <div className="container mt-4">
         <h2 className="text-center mb-4">Manage Projections</h2>
         {successMessage && (
-          <div className="alert alert-success mt-3">
-            {successMessage}
-          </div>
+          <div className="alert alert-success mt-3">{successMessage}</div>
         )}
-        {projections.map(projection => (
+        {projections.map((projection) => (
           <div key={projection.id} className="projection-item">
             <div>
               <strong>Title:</strong> {projection.title}
@@ -173,9 +194,7 @@ const ManageProjections = () => {
             <div>
               <strong>Time:</strong> {formatTime(projection.time)}
             </div>
-            <div>
-              <strong>Hall:</strong> {projection.id}
-            </div>
+
             <button
               className="btn btn-primary"
               onClick={() => handleEditProjection(projection)}
@@ -234,11 +253,15 @@ const ManageProjections = () => {
                 </Form.Group>
                 <Form.Group>
                   <Form.Label>Hall</Form.Label>
-                  {selectedProjection.date && selectedProjection.time && selectedProjection.movieId && (
-                    loadingHalls ? (
+                  {selectedProjection.date &&
+                    selectedProjection.time &&
+                    selectedProjection.movieId &&
+                    (loadingHalls ? (
                       <p>Loading halls...</p>
                     ) : availableHalls.length === 0 ? (
-                      <p>No available halls for selected date, time, and movie.</p>
+                      <p>
+                        No available halls for selected date, time, and movie.
+                      </p>
                     ) : (
                       <Form.Control
                         as="select"
@@ -252,13 +275,15 @@ const ManageProjections = () => {
                           </option>
                         ))}
                       </Form.Control>
-                    )
-                  )}
+                    ))}
                 </Form.Group>
               </Form>
             </Modal.Body>
             <Modal.Footer>
-              <Button variant="secondary" onClick={() => setShowEditModal(false)}>
+              <Button
+                variant="secondary"
+                onClick={() => setShowEditModal(false)}
+              >
                 Close
               </Button>
               <Button variant="primary" onClick={handleUpdateProjection}>

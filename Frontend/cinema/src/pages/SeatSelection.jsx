@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import SeatService from "../services/SeatService";
 
 const SeatSelection = () => {
   const navigate = useNavigate();
@@ -10,27 +10,33 @@ const SeatSelection = () => {
   const [detailedSelectedSeats, setDetailedSelectedSeats] = useState([]);
   const [seats, setSeats] = useState([]);
   const [reservedSeats, setReservedSeats] = useState([]);
+  const [hallNumber, setHallNumber] = useState();
 
   useEffect(() => {
-    axios
-      .get(`http://localhost:5058/seat/ByProjection/${projectionId}`)
-      .then((response) => {
+    const fetchSeats = async () => {
+      try {
+        const response = await SeatService.getSeatsByProjection(projectionId);
         setSeats(response.data);
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error("Error fetching seats:", error);
-      });
+      }
+    };
 
-    axios
-      .get(`http://localhost:5058/seat/ReservedByProjection/${projectionId}`)
-      .then((response) => {
+    const fetchReservedSeats = async () => {
+      try {
+        const response = await SeatService.getReservedSeatsByProjection(
+          projectionId
+        );
         setReservedSeats(
           response.data.map((seat) => `${seat.rowLetter}${seat.seatNumber}`)
         );
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error("Error fetching reserved seats:", error);
-      });
+      }
+    };
+
+    fetchSeats();
+    fetchReservedSeats();
   }, [projectionId]);
 
   const handleSeatSelect = (seatId) => {
@@ -47,13 +53,18 @@ const SeatSelection = () => {
       setSelectedSeats([...selectedSeats, seatId]);
       setDetailedSelectedSeats([
         ...detailedSelectedSeats,
-        { id: seat.id, rowLetter: seat.rowLetter, seatNumber: seat.seatNumber },
+        {
+          id: seat.id,
+          rowLetter: seat.rowLetter,
+          seatNumber: seat.seatNumber,
+          hallNumber: seat.hallNumber,
+        },
       ]);
     }
   };
   const handleConfirm = () => {
     if (selectedSeats.length > 0) {
-      navigate(`/payment/${projectionId}`, {
+      navigate(`/payment/${projectionId}}`, {
         state: { detailedSelectedSeats, projectionId },
       });
     } else {

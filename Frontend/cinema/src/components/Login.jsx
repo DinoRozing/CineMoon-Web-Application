@@ -1,13 +1,18 @@
 import React, { useContext, useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Context } from "../App";
+import { AuthenticationContext } from "../context/AuthenticationContextProvider";
+import { jwtDecode } from "jwt-decode";
 
 const Login = ({ openRegisterModal, onSuccess }) => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [signedIn, setSignedIn] = useContext(Context);
+  const { saveToken } = useContext(AuthenticationContext);
+  const [decodedUser, setDecodedUser] = useState({});
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -18,8 +23,17 @@ const Login = ({ openRegisterModal, onSuccess }) => {
       });
       alert("Login successful!");
       setSignedIn(true);
+
       localStorage.setItem("token", response.data);
+      const decoded = jwtDecode(response.data);
+      setDecodedUser(decoded);
+
+      {
+        decodedUser.Role == "Admin" && navigate("/admin");
+      }
       onSuccess(response.data);
+
+      saveToken(response.data);
     } catch (error) {
       setError("Invalid email or password. Please try again.");
     }

@@ -18,6 +18,9 @@ const Register = ({ openLoginModal }) => {
         lastName,
       });
       alert("Registration successful!");
+
+      // setRegisterModalIsOpen(false);
+      // //       setLoginModalIsOpen(true);
     } catch (error) {
       alert("Error during registration: " + error.message);
     }

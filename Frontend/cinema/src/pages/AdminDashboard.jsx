@@ -24,7 +24,7 @@ const AdminDashboard = () => {
           <div className="card mb-3">
             <div className="card-body">
               <h5 className="card-title">Manage Projections</h5>
-              <p className="card-text" >Add, delete and manage projections.</p>
+              <p className="card-text">Add, delete and manage projections.</p>
               <Link to="/add-projection" className="btn btn-primary">
                 Add Projection
               </Link>
@@ -39,10 +39,10 @@ const AdminDashboard = () => {
         <div className="col-md-6">
           <div className="card mb-3">
             <div className="card-body">
-              <h5 className="card-title">Manage Users</h5>
-              <p className="card-text">View and manage registered users.</p>
-              <Link to="/admin/view-users" className="btn btn-primary">
-                View Users
+              <h5 className="card-title">View payments</h5>
+              <p className="card-text">View succesful payments.</p>
+              <Link to="/view-payments" className="btn btn-primary">
+                View Payments
               </Link>
             </div>
           </div>

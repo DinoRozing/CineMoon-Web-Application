@@ -33,6 +33,34 @@ namespace Cinema.WebApi.Controllers
             return Ok(new { PaymentId = paymentId });
         }
         
+        [HttpGet]
+        public async Task<IActionResult> GetAllPaymentsAsync()
+        {
+            try
+            {
+                var payments = await _paymentService.GetAllPaymentsAsync();
+                return Ok(payments);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Failed to retrieve payments: {ex.Message}");
+            }
+        }
+
+        [HttpGet("{userId}")]
+        public async Task<IActionResult> GetPaymentsByUserAsync(Guid userId)
+        {
+            try
+            {
+                var payments = await _paymentService.GetPaymentsByUserAsync(userId);
+                return Ok(payments);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Failed to retrieve payments for user with ID {userId}: {ex.Message}");
+            }
+        }
+        
 
     }
 }

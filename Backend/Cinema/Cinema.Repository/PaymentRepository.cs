@@ -36,5 +36,60 @@ namespace Cinema.Repository
 
             await command.ExecuteNonQueryAsync();
         }
+        
+        
+        public async Task<List<GetPayment>> GetAllPaymentsAsync()
+        {
+            await using var connection = new NpgsqlConnection(_connectionString);
+            await connection.OpenAsync();
+
+            var commandText = @"SELECT ""Id"", ""TotalPrice"", ""PaymentDate""
+                                FROM ""Payment"";";
+
+            await using var command = new NpgsqlCommand(commandText, connection);
+            var payments = new List<GetPayment>();
+
+            await using var reader = await command.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                var payment = new GetPayment
+                {
+                    Id = reader.GetGuid(0),
+                    TotalPrice = reader.GetDecimal(1),
+                    PaymentDate = reader.GetDateTime(2)
+                };
+                payments.Add(payment);
+            }
+
+            return payments;
+        }
+
+        public async Task<List<GetPayment>> GetPaymentsByUserAsync(Guid userId)
+        {
+            await using var connection = new NpgsqlConnection(_connectionString);
+            await connection.OpenAsync();
+
+            var commandText = @"SELECT ""Id"", ""TotalPrice"", ""PaymentDate""
+                                FROM ""Payment""
+                                WHERE ""CreatedByUserId"" = @userId;";
+
+            await using var command = new NpgsqlCommand(commandText, connection);
+            command.Parameters.AddWithValue("@userId", userId);
+            var payments = new List<GetPayment>();
+
+            await using var reader = await command.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                var payment = new GetPayment
+                {
+                    Id = reader.GetGuid(0),
+                    TotalPrice = reader.GetDecimal(1),
+                    PaymentDate = reader.GetDateTime(2)
+                };
+                payments.Add(payment);
+            }
+
+            return payments;
+        }
     }
 }

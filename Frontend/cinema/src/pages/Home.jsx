@@ -1,13 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import MovieService from "../services/MovieService";
 import GenreService from "../services/GenreService";
 import LanguageService from "../services/LanguageService";
+import { AuthenticationContext } from "../context/AuthenticationContextProvider";
+import { jwtDecode } from "jwt-decode";
 
 function Home() {
   const [movies, setMovies] = useState([]);
   const [allMovies, setAllMovies] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [decodedUser, setDecodedUser] = useState({});
   const [filters, setFilters] = useState({
     genreId: "",
     languageId: "",
@@ -15,7 +18,7 @@ function Home() {
     sortOrder: "DESC",
     searchTerm: "",
     pageNumber: 1,
-    pageSize: 2,
+    pageSize: 3,
   });
 
   const [filter, setFilter] = useState({
@@ -32,6 +35,23 @@ function Home() {
 
   const [genres, setGenres] = useState([]);
   const [languages, setLanguages] = useState([]);
+  {
+    decodedUser.Role == "Admin" && navigate("/admin");
+  }
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        setDecodedUser(decodedToken);
+      } catch (error) {
+        console.error("Invalid token specified:", error);
+      }
+    } else {
+      console.error("No token found in localStorage.");
+    }
+  }, []);
 
   useEffect(() => {
     const fetchGenresAndLanguages = async () => {
@@ -108,8 +128,6 @@ function Home() {
   const handleMovieClick = (movieId) => {
     navigate(`/movie/${movieId}`);
   };
-  //console.log(allMovies.length);
-  //console.log(movies.length);
 
   const totalPages = Math.ceil(allMovies.length / filters.pageSize);
 
@@ -124,15 +142,6 @@ function Home() {
     <div className="container mt-5">
       <h1>Movies</h1>
       <div className="row mb-4">
-        <div className="col-md-6">
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Search..."
-            value={searchTerm}
-            onChange={handleSearchChange}
-          />
-        </div>
         <div className="col-md-3">
           <select
             className="form-control"

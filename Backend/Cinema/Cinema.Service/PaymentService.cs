@@ -21,6 +21,16 @@ namespace Cinema.Service
 
             return payment.Id; 
         }
+        
+        public async Task<List<GetPayment>> GetAllPaymentsAsync()
+        {
+            return await _paymentRepository.GetAllPaymentsAsync();
+        }
+
+        public async Task<List<GetPayment>> GetPaymentsByUserAsync(Guid userId)
+        {
+            return await _paymentRepository.GetPaymentsByUserAsync(userId);
+        }
 
     }
 }
