@@ -25,6 +25,14 @@ namespace Cinema.WebApi.Controllers
             await _seatService.AddSeatAsync(seat);
             return Ok();
         }
+        
+        [HttpPost("reserved")]
+        public async Task<IActionResult> AddReservedSeatAsync([FromBody] CreateReservedSeat reservedSeat)
+        {
+            await _seatService.AddReservedSeatAsync(reservedSeat);
+            return Ok();
+        }
+
 
         [HttpGet]
         public async Task<IActionResult> GetAllSeatsAsync()
@@ -42,6 +50,20 @@ namespace Cinema.WebApi.Controllers
                 return NotFound();
             }
             return Ok(seat);
+        }
+        
+        [HttpGet("ByProjection/{projectionId}")]
+        public async Task<IActionResult> GetSeatsByProjectionIdAsync(Guid projectionId)
+        {
+            var seats = await _seatService.GetSeatsByProjectionIdAsync(projectionId);
+            return Ok(seats);
+        }
+
+        [HttpGet("ReservedByProjection/{projectionId}")]
+        public async Task<IActionResult> GetReservedSeatsByProjectionIdAsync(Guid projectionId)
+        {
+            var reservedSeats = await _seatService.GetReservedSeatsByProjectionIdAsync(projectionId);
+            return Ok(reservedSeats);
         }
 
         [HttpPut("{id}")]

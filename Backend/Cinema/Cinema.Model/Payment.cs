@@ -10,6 +10,8 @@ namespace Cinema.Model
     {
         public Guid Id { get; set; }
         public decimal TotalPrice { get; set; }
+        
+        public DateTime PaymentDate { get; set; }
         public bool IsActive { get; set; }
         public DateTime DateCreated { get; set; }
         public DateTime DateUpdated { get; set; }

@@ -36,14 +36,18 @@ namespace Cinema.Service
         {
             MovieGet movie = await _movieRepository.GetMovieByIdAsync(movieId);
             var movieDuration = movie.Duration;
-            var projectionLowerLimit = time.AddMinutes(-30);
-            var projectionUpperLimit = time.AddMinutes(movieDuration + 30);
-            
-            return await _hallRepository.GetAvailableHallsAsync(date, projectionLowerLimit, projectionUpperLimit);
-            
-            
-            
 
+            var movieDurationTimeSpan = TimeSpan.FromMinutes(movieDuration);
+
+            var projectionLowerLimit = time.AddMinutes(-29);
+            var projectionUpperLimit = time.Add(movieDurationTimeSpan).AddMinutes(29);
+
+            return await _hallRepository.GetAvailableHallsAsync(date, projectionLowerLimit, projectionUpperLimit);
+        }
+        
+        public async Task<Hall?> GetHallByProjectionIdAsync(Guid projectionId)
+        {
+            return await _hallRepository.GetHallByProjectionIdAsync(projectionId);
         }
 
         public async Task UpdateHallAsync(Hall hall)

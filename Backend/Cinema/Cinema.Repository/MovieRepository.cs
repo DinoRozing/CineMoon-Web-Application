@@ -1,13 +1,11 @@
 using Cinema.Model;
-using Cinema.Common;
 using Cinema.Repository.Common;
 using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using DTO.MovieModel;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System.Net.NetworkInformation;
+using Cinema.Common;
 using System.Text;
 
 namespace Cinema.Repository
@@ -20,12 +18,12 @@ namespace Cinema.Repository
         {
             _connectionString = connectionString;
         }
-        
+
         public async Task AddMovieAsync(Movie movie)
         {
             await using var connection = new NpgsqlConnection(_connectionString);
             await connection.OpenAsync();
-            
+
             try
             {
                 var addMovieCommandText = @"
@@ -37,7 +35,7 @@ namespace Cinema.Repository
                     (@Id, @Title, @Description, @Duration, @LanguageId, 
                      @CoverUrl, @TrailerUrl, @AdminId, @GenreId, @IsActive, @DateCreated, @DateUpdated, 
                      @CreatedByUserId, @UpdatedByUserId)";
-                
+
                 await using var addMovieCommand = new NpgsqlCommand(addMovieCommandText, connection);
                 addMovieCommand.Parameters.AddWithValue("@Id", movie.Id);
                 addMovieCommand.Parameters.AddWithValue("@Title", movie.Title);
@@ -53,9 +51,9 @@ namespace Cinema.Repository
                 addMovieCommand.Parameters.AddWithValue("@DateUpdated", movie.DateUpdated);
                 addMovieCommand.Parameters.AddWithValue("@CreatedByUserId", movie.CreatedByUserId);
                 addMovieCommand.Parameters.AddWithValue("@UpdatedByUserId", movie.UpdatedByUserId);
-                
+
                 await addMovieCommand.ExecuteNonQueryAsync();
-                
+
                 foreach (var actorId in movie.ActorId)
                 {
                     var addMovieActorCommandText = @"
@@ -63,12 +61,11 @@ namespace Cinema.Repository
                         (""MovieId"", ""ActorId"")
                         VALUES 
                         (@MovieId, @ActorId)";
-                    
+
                     await using var addMovieActorCommand = new NpgsqlCommand(addMovieActorCommandText, connection);
                     addMovieActorCommand.Parameters.AddWithValue("@MovieId", movie.Id);
                     addMovieActorCommand.Parameters.AddWithValue("@ActorId", actorId);
-                    
-                    
+
                     await addMovieActorCommand.ExecuteNonQueryAsync();
                 }
             }
@@ -77,7 +74,7 @@ namespace Cinema.Repository
                 throw new Exception("Error adding movie", ex);
             }
         }
-        
+
         public async Task AddActorToMovieAsync(Guid movieId, Guid actorId)
         {
             try
@@ -96,20 +93,20 @@ namespace Cinema.Repository
                 addActorToMovieCommand.Parameters.AddWithValue("@ActorId", actorId);
 
                 await addActorToMovieCommand.ExecuteNonQueryAsync();
-                
+
             }
             catch (Exception ex)
             {
                 throw new Exception("Error adding actor to movie", ex);
             }
         }
-        
+
         public async Task<MovieGet> GetMovieByIdAsync(Guid id)
         {
             var connection = new NpgsqlConnection(_connectionString);
             await connection.OpenAsync();
-    
-            var commandText =  @"
+
+            var commandText = @"
                             SELECT 
                                 m.*, 
                                 string_agg(a.""Name"", ', ') AS ""ActorNames"",
@@ -140,13 +137,13 @@ namespace Cinema.Repository
                     Description = reader.GetString(reader.GetOrdinal("Description")),
                     Duration = reader.GetInt32(reader.GetOrdinal("Duration")),
                     Language = reader.GetString(reader.GetOrdinal("Language")),
-                    CoverUrl = reader.GetString(reader.GetOrdinal("CoverUrl")), 
-                    TrailerUrl = reader.GetString(reader.GetOrdinal("TrailerUrl")), 
-                    ActorNames = [reader.GetString(reader.GetOrdinal("ActorNames"))] 
+                    CoverUrl = reader.GetString(reader.GetOrdinal("CoverUrl")),
+                    TrailerUrl = reader.GetString(reader.GetOrdinal("TrailerUrl")),
+                    ActorNames = reader.IsDBNull(reader.GetOrdinal("ActorNames")) ? new List<string>() : reader.GetString(reader.GetOrdinal("ActorNames")).Split(", ").ToList(),
                 };
             }
 
-            connection.Close(); 
+            connection.Close();
 
             return movie;
         }
@@ -162,7 +159,7 @@ namespace Cinema.Repository
                                       WHERE 1 = 1");
 
             if (filtering.MovieId != null)
-            { 
+            {
                 queryBuilder.Append(" AND m.\"Id\" = @MovieId");
             }
 
@@ -176,13 +173,23 @@ namespace Cinema.Repository
                 queryBuilder.Append(" AND m.\"LanguageId\" = @LanguageId");
             }
             
+            if (!string.IsNullOrEmpty(filtering.SearchTerm))
+            {
+                queryBuilder.Append(" AND m.\"Title\" ILIKE '%' || @SearchTerm || '%'");
+            }
+
             queryBuilder.Append(" GROUP BY m.\"Id\", m.\"Title\", m.\"Description\", m.\"Duration\", m.\"LanguageId\", m.\"CoverUrl\", m.\"TrailerUrl\", g.\"Name\", l.\"Name\"");
-
-
-
+            
             queryBuilder.Append($" ORDER BY \"{sorting.SortBy}\" {sorting.SortOrder}");
 
-            queryBuilder.Append($" OFFSET {paging.PageSize * (paging.PageNumber - 1)} LIMIT {paging.PageSize};");
+            if (paging.PageSize > 0) 
+            {
+                queryBuilder.Append($" OFFSET {paging.PageSize * (paging.PageNumber - 1)} LIMIT {paging.PageSize};");
+            }
+            else
+            {
+                queryBuilder.Append(";"); 
+            }
 
             await using var connection = new NpgsqlConnection(_connectionString);
             var movies = new List<MovieGet>();
@@ -204,7 +211,12 @@ namespace Cinema.Repository
             {
                 command.Parameters.AddWithValue("@LanguageId", filtering.LanguageId);
             }
-
+            
+            if (!string.IsNullOrEmpty(filtering.SearchTerm))
+            {
+                command.Parameters.AddWithValue("@SearchTerm", filtering.SearchTerm);
+            }
+            
             await using var reader = await command.ExecuteReaderAsync();
 
             while (await reader.ReadAsync())
@@ -226,20 +238,20 @@ namespace Cinema.Repository
             }
             return movies;
         }
-        
+
         public async Task<bool> MovieExistsAsync(string title)
         {
             await using var connection = new NpgsqlConnection(_connectionString);
             await connection.OpenAsync();
-    
+
             var commandText = @"SELECT COUNT(*) FROM ""Movie"" WHERE ""Title"" = @Title";
             await using var command = new NpgsqlCommand(commandText, connection);
             command.Parameters.AddWithValue("@Title", title);
-    
+
             var count = (long)await command.ExecuteScalarAsync();
             return count > 0;
         }
-        
+
         public async Task UpdateMovieAsync(Movie movie)
         {
             using (var connection = new NpgsqlConnection(_connectionString))
@@ -257,11 +269,11 @@ namespace Cinema.Repository
                     command.Parameters.AddWithValue("@LanguageId", movie.LanguageId);
                     command.Parameters.AddWithValue("@GenreId", movie.GenreId);
                     command.Parameters.AddWithValue("@CoverUrl", movie.CoverUrl);
-                    command.Parameters.AddWithValue("@TrailerUrl",movie.TrailerUrl);
+                    command.Parameters.AddWithValue("@TrailerUrl", movie.TrailerUrl);
                     command.Parameters.AddWithValue("@IsActive", movie.IsActive);
                     command.Parameters.AddWithValue("@DateUpdated", movie.DateUpdated);
                     command.Parameters.AddWithValue("@UpdatedByUserId", movie.UpdatedByUserId);
-                    
+
                     Console.WriteLine("Executing SQL: " + command.CommandText);
                     foreach (NpgsqlParameter param in command.Parameters)
                     {
@@ -290,14 +302,14 @@ namespace Cinema.Repository
             var deleteMovieActorCommand = new NpgsqlCommand(deleteMovieActorCommandText, connection);
             deleteMovieActorCommand.Parameters.AddWithValue("@MovieId", id);
             await deleteMovieActorCommand.ExecuteNonQueryAsync();
-                
+
             var deleteMovieCommandText = @"DELETE FROM ""Movie"" WHERE ""Id"" = @Id";
             var deleteMovieCommand = new NpgsqlCommand(deleteMovieCommandText, connection);
             deleteMovieCommand.Parameters.AddWithValue("@Id", id);
             await deleteMovieCommand.ExecuteNonQueryAsync();
         }
-        
-        public async Task  DeleteActorFromMovie(Guid movieId, Guid actorId)
+
+        public async Task DeleteActorFromMovie(Guid movieId, Guid actorId)
         {
             var connection = new NpgsqlConnection(_connectionString);
             await connection.OpenAsync();
@@ -308,7 +320,7 @@ namespace Cinema.Repository
             deleteMovieActorCommand.Parameters.AddWithValue("@MovieId", movieId);
             deleteMovieActorCommand.Parameters.AddWithValue("@ActorId", actorId);
             await deleteMovieActorCommand.ExecuteNonQueryAsync();
-            
+
         }
     }
 }

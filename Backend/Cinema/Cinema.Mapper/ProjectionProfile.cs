@@ -12,6 +12,8 @@ namespace Cinema.Mapper
                 .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Movie.Title));
             CreateMap<PostProjectionRest, Projection>();
             CreateMap<PutProjectionRest, Projection>();
+
+            CreateMap<PostProjectionHallRest, ProjectionHall>();
         }
     }
 }

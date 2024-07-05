@@ -15,9 +15,10 @@ namespace Cinema.WebApi.Controllers
         private readonly IActorService _actorService;
         private readonly IMapper _mapper;
 
-        public MovieController(IMovieService movieService, IActorService _actorService, IMapper mapper)
+        public MovieController(IMovieService movieService, IActorService actorService, IMapper mapper)
         {
             _movieService = movieService;
+            _actorService = actorService;
             _mapper = mapper;
         }
 
@@ -43,16 +44,15 @@ namespace Cinema.WebApi.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-        
+
+
         [HttpPost("{movieId}/actor/{actorId}")]
         public async Task<IActionResult> AddActorToMovie(Guid movieId, Guid actorId)
         {
             try
             {
                 await _movieService.AddActorToMovieAsync(movieId, actorId);
-                
                 return Ok();
-            
             }
             catch (Exception ex)
             {
@@ -69,9 +69,9 @@ namespace Cinema.WebApi.Controllers
                 {
                     MovieId = movieId,
                     GenreId = genreId,
-                    LanguageId = languageId
+                    LanguageId = languageId,
                 };
-                
+
                 var sorting = new MovieSorting
                 {
                     SortBy = sortBy,
@@ -94,22 +94,24 @@ namespace Cinema.WebApi.Controllers
             }
         }
 
+
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateMovieAsync(Guid id, [FromBody] MoviePut moviePut)
         {
             try
             {
                 var movie = _mapper.Map<Movie>(moviePut);
+                movie.Id = id;
                 await _movieService.UpdateMovieAsync(movie);
 
                 return Ok();
-                
+
             }
             catch (Exception ex)
             {
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
-            
+
         }
 
         [HttpDelete("{id}")]
@@ -125,23 +127,21 @@ namespace Cinema.WebApi.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
-        
+
         [HttpDelete("{movieId}/actor/{actorId}")]
         public async Task<IActionResult> DeleteActorFromMovie(Guid movieId, Guid actorId)
         {
             try
             {
                 await _movieService.DeleteActorFromMovie(movieId, actorId);
-                
+
                 return Ok();
-            
+
             }
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
             }
         }
-
-
     }
 }

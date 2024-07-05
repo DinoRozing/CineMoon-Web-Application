@@ -22,6 +22,11 @@ namespace Cinema.Service
         {
             return await _reviewRepository.GetReviewByIdAsync(id);
         }
+        
+        public async Task<IEnumerable<Review>> GetReviewsByMovieIdAsync(Guid id)
+        {
+            return await _reviewRepository.GetReviewsByMovieIdAsync(id);
+        }
 
         public async Task AddReviewAsync(Review review)
         {

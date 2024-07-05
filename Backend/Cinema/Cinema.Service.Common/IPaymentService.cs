@@ -5,6 +5,8 @@ namespace Cinema.Service.Common
 {
     public interface IPaymentService
     {
-        Task<Payment> CreatePaymentAsync(decimal totalPrice, Guid userId);
+        Task<Guid> AddPaymentAsync(Payment payment);
+        Task<List<GetPayment>> GetAllPaymentsAsync();
+        Task<List<GetPayment>> GetPaymentsByUserAsync(Guid userId);
     }
 }

@@ -6,8 +6,8 @@ namespace Cinema.Repository.Common
     {
         Task<List<Projection>> GetAllProjectionsAsync();
         Task<Projection?> GetProjectionByIdAsync(Guid id);
+        Task<IEnumerable<Projection>> GetProjectionsByMovieIdAsync(Guid id);
         Task UpdateProjectionAsync(Projection projection);
-
         Task AddProjectionAsync(Projection projection);
         Task DeleteProjectionAsync(Guid id);
     }

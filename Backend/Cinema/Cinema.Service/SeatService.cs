@@ -25,10 +25,39 @@ namespace Cinema.Service
         {
             return await _seatRepository.GetSeatByIdAsync(id);
         }
+        
+        public async Task<List<Seat>> GetSeatsByProjectionIdAsync(Guid projectionId)
+        {
+            return await _seatRepository.GetSeatsByProjectionIdAsync(projectionId);
+        }
+
+        public async Task<List<SeatReserved>> GetReservedSeatsByProjectionIdAsync(Guid projectionId)
+        {
+            return await _seatRepository.GetReservedSeatsByProjectionIdAsync(projectionId);
+        }
 
         public async Task AddSeatAsync(Seat seat)
         {
             await _seatRepository.AddSeatAsync(seat);
+        }
+        public async Task AddReservedSeatAsync(CreateReservedSeat reservedSeat)
+        {
+
+            var now = DateTime.UtcNow;
+            var seatReserved = new SeatReserved
+            {
+                Id = Guid.NewGuid(),
+                TicketId = reservedSeat.TicketId,
+                ProjectionId = reservedSeat.ProjectionId,
+                SeatId = reservedSeat.SeatId,
+                IsActive = true,
+                DateCreated = now,
+                DateUpdated = now,
+                CreatedByUserId = reservedSeat.UserId,
+                UpdatedByUserId = reservedSeat.UserId
+            };
+
+            await _seatRepository.AddReservedSeatAsync(seatReserved);
         }
 
         public async Task UpdateSeatAsync(Seat seat)

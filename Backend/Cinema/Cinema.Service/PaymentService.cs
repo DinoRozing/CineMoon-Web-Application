@@ -15,22 +15,22 @@ namespace Cinema.Service
             _paymentRepository = paymentRepository;
         }
 
-        public async Task<Payment> CreatePaymentAsync(decimal totalPrice, Guid userId)
-        {
-            var payment = new Payment
-            {
-                Id = Guid.NewGuid(),
-                TotalPrice = totalPrice,
-                IsActive = true,
-                DateCreated = DateTime.UtcNow,
-                DateUpdated = DateTime.UtcNow,
-                CreatedByUserId = userId,
-                UpdatedByUserId = userId
-            };
+        public async Task<Guid>  AddPaymentAsync(Payment payment)
+        { 
+            await _paymentRepository.AddPaymentAsync(payment);
 
-            await _paymentRepository.CreatePaymentAsync(payment);
-
-            return payment;
+            return payment.Id; 
         }
+        
+        public async Task<List<GetPayment>> GetAllPaymentsAsync()
+        {
+            return await _paymentRepository.GetAllPaymentsAsync();
+        }
+
+        public async Task<List<GetPayment>> GetPaymentsByUserAsync(Guid userId)
+        {
+            return await _paymentRepository.GetPaymentsByUserAsync(userId);
+        }
+
     }
 }

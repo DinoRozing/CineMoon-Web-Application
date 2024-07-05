@@ -12,13 +12,15 @@ namespace Cinema.Model
         public Guid TicketId { get; set; }
         public Guid ProjectionId { get; set; }
         public Guid SeatId { get; set; }
-        public bool IsActive { get; set; }
-        public DateTime DateCreated { get; set; }
-        public DateTime DateUpdated { get; set; }
-        public Guid CreatedByUserId { get; set; }
-        public Guid UpdatedByUserId { get; set; }
-        public Ticket? Ticket { get; set; }
-        public Projection? Projection { get; set; }
-        public Seat? Seat { get; set; }
+        public bool? IsActive { get; set; }
+        public DateTime? DateCreated { get; set; }
+        public DateTime? DateUpdated { get; set; }
+        public Guid? CreatedByUserId { get; set; }
+        public Guid? UpdatedByUserId { get; set; }
+        public int? SeatNumber { get; set; }
+        public string? RowLetter { get; set; }
+        public Guid? HallId { get; set; }
+        public int? HallNumber { get; set; }
     }
 }
+

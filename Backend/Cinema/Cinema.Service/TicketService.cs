@@ -17,34 +17,13 @@ namespace Cinema.Service
             _ticketRepository = ticketRepository;
             _paymentService = paymentService;
         }
-
-        public async Task<Ticket> CreateTicketAsync(Ticket ticket)
+        
+        public async Task<Guid>  AddTicketAsync(Ticket ticket)
         {
-            var payment = await _paymentService.CreatePaymentAsync(ticket.Price, ticket.UserId);
-            ticket.PaymentId = payment.Id;
-
-            ticket.Id = Guid.NewGuid();
-            ticket.DateCreated = DateTime.UtcNow;
-            ticket.DateUpdated = DateTime.UtcNow;
-
-            await _ticketRepository.CreateTicketAsync(ticket);
-
-            return ticket;
+            await _ticketRepository.AddTicketAsync(ticket);
+            return ticket.Id;
         }
 
-        public async Task<List<Ticket>> GetAllTicketsAsync()
-        {
-            return await _ticketRepository.GetAllTicketsAsync();
-        }
-
-        public async Task<Ticket> GetTicketByIdAsync(Guid id)
-        {
-            return await _ticketRepository.GetTicketByIdAsync(id);
-        }
-
-        public async Task DeleteTicketAsync(Guid id)
-        {
-            await _ticketRepository.DeleteTicketAsync(id);
-        }
+       
     }
 }
